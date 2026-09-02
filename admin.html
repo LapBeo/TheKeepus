@@ -1,0 +1,1490 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Quản lý đơn hàng - The.Keepus</title>
+
+<style>
+:root{
+    --blue:#4f7fdb;
+    --blue-dark:#173b7a;
+    --ink:#0e1525;
+    --muted:#687284;
+    --border:#e5eaf3;
+    --soft:#f7f9fc;
+    --green:#159447;
+    --red:#d94343;
+}
+
+*{
+    box-sizing:border-box;
+}
+
+body{
+    margin:0;
+    font-family:Arial,Helvetica,sans-serif;
+    background:#f4f7fb;
+    color:var(--ink);
+}
+
+header{
+    background:#fff;
+    border-bottom:1px solid var(--border);
+    padding:18px 24px;
+    position:sticky;
+    top:0;
+    z-index:20;
+}
+
+.header-inner{
+    max-width:1300px;
+    margin:auto;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:20px;
+}
+
+.logo{
+    font-size:26px;
+    font-weight:800;
+    color:var(--blue);
+}
+
+.admin-name{
+    color:var(--blue-dark);
+    font-weight:700;
+}
+
+.wrap{
+    width:min(1300px,calc(100% - 32px));
+    margin:28px auto;
+}
+
+.login-box{
+    max-width:460px;
+    margin:80px auto;
+    background:#fff;
+    border:1px solid var(--border);
+    border-radius:20px;
+    padding:28px;
+    box-shadow:0 12px 35px rgba(20,40,80,.08);
+}
+
+.login-box h2{
+    margin:0 0 10px;
+    color:var(--blue-dark);
+}
+
+.login-box p{
+    margin:0 0 18px;
+    color:var(--muted);
+    line-height:1.6;
+}
+
+.login-box input{
+    width:100%;
+    padding:14px;
+    border:1px solid #dce3ee;
+    border-radius:12px;
+    font:inherit;
+    outline:none;
+}
+
+.login-box button{
+    width:100%;
+    margin-top:12px;
+    padding:14px;
+    border:0;
+    border-radius:999px;
+    background:var(--blue);
+    color:#fff;
+    font-weight:700;
+    cursor:pointer;
+}
+
+.toolbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:14px;
+    margin-bottom:18px;
+}
+
+.toolbar h1{
+    margin:0;
+    color:var(--blue-dark);
+    font-size:30px;
+}
+
+.toolbar input{
+    width:320px;
+    max-width:100%;
+    padding:12px 14px;
+    border:1px solid var(--border);
+    border-radius:12px;
+    font:inherit;
+}
+
+.orders{
+    display:grid;
+    gap:12px;
+}
+
+.order-card{
+    background:#fff;
+    border:1px solid var(--border);
+    border-radius:18px;
+    padding:18px;
+    cursor:pointer;
+    transition:.2s;
+}
+
+.order-card:hover{
+    transform:translateY(-2px);
+    box-shadow:0 10px 28px rgba(20,40,80,.08);
+}
+
+.order-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:18px;
+}
+
+.order-code{
+    font-weight:800;
+    color:var(--blue-dark);
+    font-size:18px;
+}
+
+.order-customer{
+    margin-top:6px;
+    color:#35435c;
+}
+
+.status{
+    padding:7px 11px;
+    border-radius:999px;
+    font-size:12px;
+    font-weight:800;
+}
+
+.status-paid{
+    background:#e8f8ee;
+    color:var(--green);
+}
+
+.status-pending{
+    background:#fff4e5;
+    color:#a76500;
+}
+
+.order-meta{
+    margin-top:12px;
+    color:var(--muted);
+    font-size:13px;
+    display:flex;
+    flex-wrap:wrap;
+    gap:14px;
+}
+
+.detail{
+    display:none;
+}
+
+.detail.active{
+    display:block;
+}
+
+.back-btn{
+    border:0;
+    background:none;
+    color:var(--blue);
+    font-weight:700;
+    cursor:pointer;
+    padding:0;
+    margin-bottom:18px;
+}
+
+.detail-grid{
+    display:grid;
+    grid-template-columns:minmax(0,1fr) minmax(360px,.8fr);
+    gap:22px;
+}
+
+.panel{
+    background:#fff;
+    border:1px solid var(--border);
+    border-radius:20px;
+    padding:22px;
+    margin-bottom:18px;
+}
+
+.panel h3{
+    margin:0 0 16px;
+    color:var(--blue-dark);
+}
+
+.row{
+    display:grid;
+    grid-template-columns:170px 1fr;
+    gap:14px;
+    margin:9px 0;
+    line-height:1.5;
+}
+
+.label{
+    color:var(--muted);
+    font-size:13px;
+    font-weight:700;
+}
+
+.value{
+    font-weight:600;
+    word-break:break-word;
+}
+
+.production-box{
+    background:#edf4ff;
+    border:1px solid #d8e7ff;
+    border-radius:16px;
+    padding:16px;
+}
+
+.production-box h4{
+    margin:0 0 12px;
+    color:var(--blue-dark);
+}
+
+.production-line{
+    margin:7px 0;
+}
+
+.final-image{
+    width:100%;
+    border-radius:14px;
+    border:1px solid var(--border);
+    background:#f5f5f5;
+}
+
+.file-card{
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:12px;
+    margin-bottom:10px;
+}
+
+.file-name{
+    font-weight:700;
+    margin-bottom:8px;
+}
+
+.file-actions{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+}
+
+.file-actions button{
+    border:0;
+    border-radius:10px;
+    padding:9px 12px;
+    cursor:pointer;
+    font-weight:700;
+}
+
+.view-btn{
+    background:#edf4ff;
+    color:var(--blue-dark);
+}
+
+.download-btn{
+    background:var(--blue);
+    color:#fff;
+}
+
+.preview-small{
+    max-width:180px;
+    max-height:180px;
+    object-fit:contain;
+    margin-bottom:10px;
+    border-radius:10px;
+    border:1px solid var(--border);
+}
+
+.money{
+    font-size:18px;
+    font-weight:800;
+}
+
+.empty{
+    background:#fff;
+    border:1px dashed var(--border);
+    border-radius:18px;
+    padding:36px;
+    text-align:center;
+    color:var(--muted);
+}
+
+#error{
+    color:var(--red);
+    margin-top:10px;
+    font-size:13px;
+}
+
+@media(max-width:900px){
+    .detail-grid{
+        grid-template-columns:1fr;
+    }
+
+    .toolbar{
+        align-items:flex-start;
+        flex-direction:column;
+    }
+}
+
+@media(max-width:600px){
+    .row{
+        grid-template-columns:1fr;
+        gap:3px;
+    }
+
+    .wrap{
+        width:min(100% - 20px,1300px);
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <div class="header-inner">
+        <div class="logo">The.Keepus</div>
+        <div class="admin-name">Quản lý đơn hàng</div>
+    </div>
+</header>
+
+<div class="wrap">
+
+    <section id="loginScreen" class="login-box">
+        <h2>Đăng nhập quản trị</h2>
+
+        <p>
+            Nhập mã quản trị để xem đơn hàng và file thiết kế của khách.
+        </p>
+
+        <input
+            type="password"
+            id="adminKey"
+            placeholder="ADMIN_KEY"
+        >
+
+        <button id="loginBtn">
+            Đăng nhập
+        </button>
+
+        <div id="error"></div>
+    </section>
+
+
+    <section id="ordersScreen" style="display:none">
+
+        <div class="toolbar">
+            <h1>Đơn hàng</h1>
+
+            <input
+                id="searchInput"
+                placeholder="Tìm mã đơn, tên, SĐT..."
+            >
+        </div>
+
+        <div id="ordersList" class="orders"></div>
+
+    </section>
+
+
+    <section id="detailScreen" class="detail">
+
+        <button
+            class="back-btn"
+            id="backBtn"
+        >
+            ← Quay lại danh sách
+        </button>
+
+        <div id="detailContent"></div>
+
+    </section>
+
+</div>
+
+<script>
+
+let ADMIN_KEY = '';
+
+let allOrders = [];
+
+
+const loginScreen =
+    document.getElementById('loginScreen');
+
+const ordersScreen =
+    document.getElementById('ordersScreen');
+
+const detailScreen =
+    document.getElementById('detailScreen');
+
+const ordersList =
+    document.getElementById('ordersList');
+
+const detailContent =
+    document.getElementById('detailContent');
+
+const errorBox =
+    document.getElementById('error');
+
+
+function money(value){
+
+    return Number(value || 0)
+        .toLocaleString('vi-VN')
+        + '₫';
+
+}
+
+
+function escapeHtml(text){
+
+    return String(text ?? '')
+        .replaceAll('&','&amp;')
+        .replaceAll('<','&lt;')
+        .replaceAll('>','&gt;')
+        .replaceAll('"','&quot;')
+        .replaceAll("'","&#039;");
+
+}
+
+
+function formatDate(value){
+
+    if(!value){
+        return '';
+    }
+
+    const date =
+        new Date(value);
+
+    if(Number.isNaN(date.getTime())){
+        return value;
+    }
+
+    return date.toLocaleString(
+        'vi-VN'
+    );
+
+}
+
+
+async function adminFetch(
+    url,
+    options = {}
+){
+
+    const headers = {
+        ...(options.headers || {}),
+        'X-Admin-Key':
+            ADMIN_KEY
+    };
+
+    return fetch(
+        url,
+        {
+            ...options,
+            headers
+        }
+    );
+
+}
+
+
+async function login(){
+
+    const key =
+        document
+        .getElementById('adminKey')
+        .value
+        .trim();
+
+    if(!key){
+
+        errorBox.textContent =
+            'Hãy nhập mã quản trị.';
+
+        return;
+    }
+
+    ADMIN_KEY =
+        key;
+
+    errorBox.textContent =
+        'Đang kiểm tra...';
+
+    try{
+
+        const response =
+            await adminFetch(
+                '/api/admin/orders'
+            );
+
+        const data =
+            await response.json();
+
+        if(
+            !response.ok
+            ||
+            !data.success
+        ){
+
+            throw new Error(
+                data.message
+                ||
+                'Mã quản trị không đúng.'
+            );
+
+        }
+
+        allOrders =
+            data.orders || [];
+
+        sessionStorage.setItem(
+            'keepusAdminKey',
+            ADMIN_KEY
+        );
+
+        errorBox.textContent = '';
+
+        loginScreen.style.display =
+            'none';
+
+        ordersScreen.style.display =
+            'block';
+
+        renderOrders(
+            allOrders
+        );
+
+    }catch(error){
+
+        errorBox.textContent =
+            error.message
+            ||
+            'Không đăng nhập được.';
+
+    }
+
+}
+
+
+function renderOrders(list){
+
+    ordersList.innerHTML = '';
+
+    if(!list.length){
+
+        ordersList.innerHTML =
+            '<div class="empty">Chưa có đơn hàng.</div>';
+
+        return;
+    }
+
+    list.forEach(order=>{
+
+        const div =
+            document.createElement(
+                'div'
+            );
+
+        div.className =
+            'order-card';
+
+        const statusClass =
+            order.status === 'paid'
+                ?
+                'status-paid'
+                :
+                'status-pending';
+
+        const statusText =
+            order.status === 'paid'
+                ?
+                'ĐÃ THANH TOÁN'
+                :
+                'CHỜ THANH TOÁN';
+
+        div.innerHTML = `
+
+            <div class="order-top">
+
+                <div>
+
+                    <div class="order-code">
+                        ${escapeHtml(order.code)}
+                    </div>
+
+                    <div class="order-customer">
+
+                        ${escapeHtml(
+                            order.customer?.fullName || ''
+                        )}
+
+                        ·
+
+                        ${escapeHtml(
+                            order.customer?.phone || ''
+                        )}
+
+                    </div>
+
+                </div>
+
+                <div class="status ${statusClass}">
+                    ${statusText}
+                </div>
+
+            </div>
+
+
+            <div class="order-meta">
+
+                <span>
+                    ${escapeHtml(
+                        order.design
+                            ?.product
+                            ?.name
+                        || ''
+                    )}
+                </span>
+
+                <span>
+                    ${money(
+                        order.totals?.total
+                    )}
+                </span>
+
+                <span>
+                    ${formatDate(
+                        order.createdAt
+                    )}
+                </span>
+
+            </div>
+        `;
+
+        div.addEventListener(
+            'click',
+            ()=>openOrder(
+                order.code
+            )
+        );
+
+        ordersList.appendChild(
+            div
+        );
+
+    });
+
+}
+
+
+async function openOrder(code){
+
+    ordersScreen.style.display =
+        'none';
+
+    detailScreen.classList.add(
+        'active'
+    );
+
+    detailContent.innerHTML =
+        '<div class="empty">Đang tải đơn...</div>';
+
+    try{
+
+        const response =
+            await adminFetch(
+                '/api/admin/orders/'
+                + encodeURIComponent(code)
+            );
+
+        const data =
+            await response.json();
+
+        if(
+            !response.ok
+            ||
+            !data.success
+        ){
+
+            throw new Error(
+                data.message
+                ||
+                'Không tải được đơn.'
+            );
+
+        }
+
+        renderDetail(
+            data.order
+        );
+
+    }catch(error){
+
+        detailContent.innerHTML =
+            '<div class="empty">'
+            + escapeHtml(
+                error.message
+            )
+            + '</div>';
+
+    }
+
+}
+
+
+function getOption(
+    order,
+    label
+){
+
+    const options =
+        order.design?.options
+        || [];
+
+    const found =
+        options.find(
+            item =>
+                item.label === label
+        );
+
+    return found?.value || '';
+
+}
+
+
+function renderDetail(order){
+
+    const design =
+        order.design || {};
+
+    const customerDesign =
+        design.customerDesign
+        || {};
+
+    const stickers =
+        design.uploadedStickers
+        || {};
+
+    const paid =
+        Number(
+            order.payment
+                ?.receivedAmount
+            || 0
+        );
+
+    const total =
+        Number(
+            order.totals?.total
+            || 0
+        );
+
+    const remaining =
+        Math.max(
+            0,
+            total - paid
+        );
+
+    detailContent.innerHTML = `
+
+        <div class="detail-grid">
+
+            <div>
+
+                <div class="panel">
+
+                    <h3>
+                        Phiếu sản xuất
+                        ·
+                        ${escapeHtml(order.code)}
+                    </h3>
+
+                    <div class="production-box">
+
+                        <h4>CẦN LÀM</h4>
+
+                        <div class="production-line">
+                            <b>Sản phẩm:</b>
+                            ${escapeHtml(
+                                design.product?.name || ''
+                            )}
+                        </div>
+
+                        <div class="production-line">
+                            <b>Kiểu áo:</b>
+                            ${escapeHtml(
+                                getOption(
+                                    order,
+                                    'Kiểu áo'
+                                )
+                            )}
+                        </div>
+
+                        <div class="production-line">
+                            <b>Quân hàm:</b>
+                            ${escapeHtml(
+                                getOption(
+                                    order,
+                                    'Quân hàm'
+                                )
+                            )}
+                        </div>
+
+                        <div class="production-line">
+                            <b>Tên trên khung:</b>
+                            ${escapeHtml(
+                                customerDesign.name || ''
+                            )}
+                        </div>
+
+                        <div class="production-line">
+                            <b>Ngày:</b>
+                            ${escapeHtml(
+                                customerDesign.date || ''
+                            )}
+                        </div>
+
+                        <div class="production-line">
+                            <b>Lời chúc:</b>
+                            ${escapeHtml(
+                                customerDesign.wish || ''
+                            )}
+                        </div>
+
+                        <div class="production-line">
+                            <b>Ghi chú khách:</b>
+                            ${escapeHtml(
+                                design.note || ''
+                            )}
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="panel">
+
+                    <h3>Thông tin khách hàng</h3>
+
+                    ${row(
+                        'Mã đơn',
+                        order.code
+                    )}
+
+                    ${row(
+                        'Người đặt',
+                        order.customer
+                            ?.fullName || ''
+                    )}
+
+                    ${row(
+                        'SĐT',
+                        order.customer
+                            ?.phone || ''
+                    )}
+
+                    ${row(
+                        'Người nhận',
+                        order.customer
+                            ?.receiverName || ''
+                    )}
+
+                    ${row(
+                        'Địa chỉ',
+                        order.customer
+                            ?.address || ''
+                    )}
+
+                    ${row(
+                        'Ngày tạo đơn',
+                        formatDate(
+                            order.createdAt
+                        )
+                    )}
+
+                </div>
+
+
+                <div class="panel">
+
+                    <h3>Thanh toán</h3>
+
+                    ${row(
+                        'Giá sản phẩm',
+                        money(
+                            order.totals
+                                ?.productPrice
+                        )
+                    )}
+
+                    ${row(
+                        'Phí ship',
+                        money(
+                            order.totals
+                                ?.shippingFee
+                        )
+                    )}
+
+                    ${row(
+                        'Giảm giá',
+                        money(
+                            order.totals
+                                ?.discount
+                        )
+                    )}
+
+                    <div class="row">
+                        <div class="label">
+                            Tổng đơn
+                        </div>
+
+                        <div class="value money">
+                            ${money(total)}
+                        </div>
+                    </div>
+
+                    ${row(
+                        'Đã thanh toán',
+                        money(paid)
+                    )}
+
+                    ${row(
+                        'Còn lại',
+                        money(remaining)
+                    )}
+
+                </div>
+
+            </div>
+
+
+            <div>
+
+                <div class="panel">
+
+                    <h3>Bản final khách đã duyệt</h3>
+
+                    <div id="finalHolder">
+                        Đang tải ảnh...
+                    </div>
+
+                </div>
+
+
+                <div class="panel">
+
+                    <h3>Sticker khách gửi</h3>
+
+                    <div id="stickersHolder">
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+    `;
+
+
+    loadFinalImage(
+        order
+    );
+
+    renderStickers(
+        order,
+        stickers
+    );
+
+}
+
+
+function row(
+    label,
+    value
+){
+
+    return `
+
+        <div class="row">
+
+            <div class="label">
+                ${escapeHtml(label)}
+            </div>
+
+            <div class="value">
+                ${escapeHtml(value)}
+            </div>
+
+        </div>
+
+    `;
+
+}
+
+
+async function getProtectedBlobUrl(
+    path
+){
+
+    const response =
+        await adminFetch(path);
+
+    if(!response.ok){
+
+        throw new Error(
+            'Không tải được file.'
+        );
+
+    }
+
+    const blob =
+        await response.blob();
+
+    return URL.createObjectURL(
+        blob
+    );
+
+}
+
+
+async function loadFinalImage(order){
+
+    const holder =
+        document.getElementById(
+            'finalHolder'
+        );
+
+    const path =
+        order.design
+            ?.previewImage;
+
+    if(!path){
+
+        holder.innerHTML =
+            'Đơn này chưa có ảnh final.';
+
+        return;
+    }
+
+    try{
+
+        const blobUrl =
+            await getProtectedBlobUrl(
+                path
+            );
+
+        holder.innerHTML = `
+
+            <img
+                class="final-image"
+                src="${blobUrl}"
+                alt="Bản final"
+            >
+
+        `;
+
+    }catch(error){
+
+        holder.textContent =
+            'Không tải được ảnh final.';
+
+    }
+
+}
+
+
+async function renderStickers(
+    order,
+    stickers
+){
+
+    const holder =
+        document.getElementById(
+            'stickersHolder'
+        );
+
+    holder.innerHTML = '';
+
+    const positions = [
+        ['left','Charm trái'],
+        ['center','Charm giữa'],
+        ['right','Charm phải']
+    ];
+
+    let count = 0;
+
+    for(
+        const [
+            key,
+            label
+        ]
+        of positions
+    ){
+
+        const item =
+            stickers[key];
+
+        if(!item?.file){
+            continue;
+        }
+
+        count++;
+
+        const card =
+            document.createElement(
+                'div'
+            );
+
+        card.className =
+            'file-card';
+
+        card.innerHTML = `
+
+            <div class="file-name">
+                ${label}
+            </div>
+
+            <div>
+                File gốc:
+                ${escapeHtml(
+                    item.originalName || ''
+                )}
+            </div>
+
+            <div style="margin-top:4px;color:#687284;font-size:12px">
+                Định dạng:
+                ${escapeHtml(
+                    item.extension || ''
+                ).toUpperCase()}
+            </div>
+
+            <div
+                class="preview-area"
+                style="margin-top:10px"
+            ></div>
+
+            <div class="file-actions">
+
+                <button
+                    class="view-btn"
+                    type="button"
+                >
+                    Xem file
+                </button>
+
+                <button
+                    class="download-btn"
+                    type="button"
+                >
+                    Tải file gốc
+                </button>
+
+            </div>
+        `;
+
+
+        const previewArea =
+            card.querySelector(
+                '.preview-area'
+            );
+
+
+        card
+        .querySelector(
+            '.view-btn'
+        )
+        .addEventListener(
+            'click',
+            async ()=>{
+
+                previewArea.textContent =
+                    'Đang tải...';
+
+                try{
+
+                    const url =
+                        await getProtectedBlobUrl(
+                            item.file
+                        );
+
+                    if(
+                        ['jpg','jpeg','png']
+                        .includes(
+                            String(
+                                item.extension
+                            )
+                            .toLowerCase()
+                        )
+                    ){
+
+                        previewArea.innerHTML = `
+
+                            <img
+                                class="preview-small"
+                                src="${url}"
+                            >
+
+                        `;
+
+                    }else{
+
+                        previewArea.innerHTML =
+                            'HEIC/HEIF nên tải file gốc để mở.';
+
+                    }
+
+                }catch(error){
+
+                    previewArea.textContent =
+                        'Không xem được file.';
+
+                }
+
+            }
+        );
+
+
+        card
+        .querySelector(
+            '.download-btn'
+        )
+        .addEventListener(
+            'click',
+            async ()=>{
+
+                try{
+
+                    const response =
+                        await adminFetch(
+                            item.file
+                        );
+
+                    if(!response.ok){
+
+                        throw new Error();
+
+                    }
+
+                    const blob =
+                        await response.blob();
+
+                    const url =
+                        URL.createObjectURL(
+                            blob
+                        );
+
+                    const a =
+                        document.createElement(
+                            'a'
+                        );
+
+                    a.href =
+                        url;
+
+                    a.download =
+                        item.originalName
+                        ||
+                        (
+                            'sticker.'
+                            +
+                            item.extension
+                        );
+
+                    document
+                        .body
+                        .appendChild(a);
+
+                    a.click();
+
+                    a.remove();
+
+                    setTimeout(
+                        ()=>
+                            URL.revokeObjectURL(
+                                url
+                            ),
+                        2000
+                    );
+
+                }catch(error){
+
+                    alert(
+                        'Không tải được file.'
+                    );
+
+                }
+
+            }
+        );
+
+
+        holder.appendChild(
+            card
+        );
+
+    }
+
+
+    if(count === 0){
+
+        holder.innerHTML =
+            'Khách không upload sticker riêng.';
+
+    }
+
+}
+
+
+document
+.getElementById('loginBtn')
+.addEventListener(
+    'click',
+    login
+);
+
+
+document
+.getElementById('adminKey')
+.addEventListener(
+    'keydown',
+    e=>{
+
+        if(e.key === 'Enter'){
+            login();
+        }
+
+    }
+);
+
+
+document
+.getElementById('backBtn')
+.addEventListener(
+    'click',
+    ()=>{
+
+        detailScreen
+            .classList
+            .remove(
+                'active'
+            );
+
+        ordersScreen.style.display =
+            'block';
+
+    }
+);
+
+
+document
+.getElementById('searchInput')
+.addEventListener(
+    'input',
+    function(){
+
+        const keyword =
+            this.value
+            .trim()
+            .toLowerCase();
+
+        if(!keyword){
+
+            renderOrders(
+                allOrders
+            );
+
+            return;
+        }
+
+        const filtered =
+            allOrders.filter(
+                order=>{
+
+                    const text = [
+
+                        order.code,
+
+                        order.customer
+                            ?.fullName,
+
+                        order.customer
+                            ?.phone,
+
+                        order.customer
+                            ?.receiverName,
+
+                        order.customer
+                            ?.address,
+
+                        order.design
+                            ?.product
+                            ?.name
+
+                    ]
+                    .join(' ')
+                    .toLowerCase();
+
+                    return text.includes(
+                        keyword
+                    );
+
+                }
+            );
+
+        renderOrders(
+            filtered
+        );
+
+    }
+);
+
+
+/* TỰ ĐĂNG NHẬP LẠI TRONG CÙNG TAB */
+
+const oldKey =
+    sessionStorage.getItem(
+        'keepusAdminKey'
+    );
+
+if(oldKey){
+
+    ADMIN_KEY =
+        oldKey;
+
+    document
+        .getElementById(
+            'adminKey'
+        )
+        .value =
+        oldKey;
+
+    login();
+
+}
+
+</script>
+
+</body>
+</html>

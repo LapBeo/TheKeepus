@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>The.Keepus - LEGO Gift Cá Nhân Hóa</title>
+
+  <!-- Font chữ -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link 
+    href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" 
+    rel="stylesheet"
+  >
+
+  <!-- File CSS riêng -->
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="logo">The<span>.</span>Keepus</div>
+
+    <nav class="nav">
+      <a href="#home">Trang chủ</a>
+      <a href="#products">Sản phẩm</a>
+      <a href="#order">Đặt hàng</a>
+      <a href="#contact">Liên hệ</a>
+    </nav>
+
+    <a href="#order" class="header-btn">Order ngay</a>
+  </header>
+
+  <!-- HERO / BANNER -->
+  <section class="hero" id="home">
+    <div class="hero-content">
+      <p class="small-title">LEGO GIFT CÁ NHÂN HÓA</p>
+
+      <h1>
+        Lưu giữ kỷ niệm bằng một món quà
+        <span>được thiết kế riêng</span>
+      </h1>
+
+      <p class="hero-desc">
+        The.Keepus chuyên thiết kế khung quà tặng LEGO theo yêu cầu:
+        áo đấu, quân phục, áo dài, vest - váy cưới, tốt nghiệp, cúp,
+        huy chương và phụ kiện mini.
+      </p>
+
+      <div class="hero-actions">
+        <a href="#order" class="btn primary">Bắt đầu đặt hàng</a>
+        <a href="#products" class="btn secondary">Xem mẫu sản phẩm</a>
+      </div>
+    </div>
+
+   <div class="hero-preview">
+  <div class="hero-slider">
+    <img id="heroSlideImage" src="images/hero1.jpg" alt="Sản phẩm The.Keepus">
+  </div>
+
+  <div class="preview-card">
+    <p>Custom LEGO Gift</p>
+    <strong>Lowkey nhưng tinh tế</strong>
+  </div>
+</div>
+  </section>
+
+  <!-- PRODUCTS -->
+  <section class="section" id="products">
+    <div class="section-title">
+      <p>CHỌN CHỦ ĐỀ</p>
+      <h2>Sản phẩm của The.Keepus</h2>
+      <span>
+        Mỗi chủ đề sẽ có nhiều mẫu nhỏ khác nhau, khách chọn mẫu nào thì form sẽ hỏi đúng thông tin mẫu đó.
+      </span>
+    </div>
+
+    <div class="product-grid">
+      <div class="product-card" onclick="quickSelectCategory('football')">
+        <img src="images/ao-dau.jpg" alt="Khung áo đấu">
+        <div class="product-info">
+          <h3>Áo đấu thể thao</h3>
+          <p>Bóng đá, bóng rổ, bóng chuyền, tên áo, số áo, cúp, bóng, huy chương.</p>
+        </div>
+      </div>
+
+      <div class="product-card" onclick="quickSelectCategory('uniform')">
+        <img src="images/quan-phuc.jpg" alt="Khung quân phục">
+        <div class="product-info">
+          <h3>Quân phục / Công an</h3>
+          <p>Công an, bộ đội, PCCC, hải quân, cầu vai, bảng tên, số hiệu, mũ.</p>
+        </div>
+      </div>
+
+      <div class="product-card" onclick="quickSelectCategory('couple')">
+        <img src="images/cap-doi.jpg" alt="Khung cặp đôi">
+        <div class="product-info">
+          <h3>Cặp đôi / Cưới</h3>
+          <p>Vest, váy cưới, áo dài đôi, tên cô dâu chú rể, ngày kỷ niệm.</p>
+        </div>
+      </div>
+
+      <div class="product-card" onclick="quickSelectCategory('graduation')">
+        <img src="images/tot-nghiep.jpg" alt="Quà tốt nghiệp">
+        <div class="product-info">
+          <h3>Tốt nghiệp</h3>
+          <p>Áo cử nhân, sash, tên người nhận, trường lớp, năm tốt nghiệp.</p>
+        </div>
+      </div>
+
+      <div class="product-card" onclick="quickSelectCategory('custom')">
+        <img src="images/thiet-ke-rieng.jpg" alt="Thiết kế riêng">
+        <div class="product-info">
+          <h3>Thiết kế riêng</h3>
+          <p>Khách gửi ý tưởng riêng, shop tư vấn bố cục và form phù hợp.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ORDER -->
+  <section class="section order-section" id="order">
+    <div class="section-title">
+      <p>FORM ORDER</p>
+      <h2>Đặt hàng theo từng mẫu</h2>
+      <span>
+        Chọn chủ đề trước, sau đó chọn mẫu con. Form sẽ tự đổi theo đúng loại sản phẩm.
+      </span>
+    </div>
+
+    <div class="order-layout">
+
+      <!-- CỘT TRÁI -->
+      <div class="order-guide">
+        <h3>Quy trình đặt hàng</h3>
+
+        <div class="guide-step">
+          <b>01</b>
+          <p>Chọn chủ đề sản phẩm</p>
+        </div>
+
+        <div class="guide-step">
+          <b>02</b>
+          <p>Chọn mẫu con trong chủ đề</p>
+        </div>
+
+        <div class="guide-step">
+          <b>03</b>
+          <p>Điền thông tin cá nhân hóa</p>
+        </div>
+
+        <div class="guide-step">
+          <b>04</b>
+          <p>Shop liên hệ xác nhận mẫu</p>
+        </div>
+
+        <div class="guide-note">
+          Sau này có thể nối form này với Google Sheet, Gmail, Telegram hoặc Zalo để nhận đơn tự động.
+        </div>
+      </div>
+
+      <!-- CỘT PHẢI -->
+      <div class="order-box">
+
+        <div class="form-group">
+          <label>Chọn chủ đề sản phẩm</label>
+          <select id="categorySelect" onchange="loadFormsByCategory()">
+            <option value="">-- Chọn chủ đề --</option>
+            <option value="football">Áo đấu thể thao</option>
+            <option value="uniform">Quân phục / Công an</option>
+            <option value="couple">Cặp đôi / Cưới</option>
+            <option value="graduation">Tốt nghiệp</option>
+            <option value="custom">Thiết kế riêng</option>
+          </select>
+        </div>
+
+        <div class="form-group hidden" id="formTypeBox">
+          <label>Chọn mẫu con</label>
+          <select id="formTypeSelect" onchange="renderDynamicForm()">
+            <option value="">-- Chọn mẫu --</option>
+          </select>
+        </div>
+
+        <form id="dynamicOrderForm" class="hidden" onsubmit="submitDynamicOrder(event)">
+          <div id="dynamicFields" class="form-grid"></div>
+
+          <button type="submit" class="submit-btn">
+            Gửi thông tin đặt hàng
+          </button>
+        </form>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer" id="contact">
+    <h2>The.Keepus</h2>
+    <p>LEGO GIFT - Quà tặng cá nhân hóa</p>
+    <p>Instagram: @the.keepus</p>
+  </footer>
+
+  <!-- File JS riêng -->
+  <script src="script.js"></script>
+</body>
+</html>
