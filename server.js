@@ -124,25 +124,48 @@ async function registerPayOSWebhook() {
 
     try {
 
-const webhookUrl =
-    'https://thekeepus.onrender.com/webhooks/payos-test';
+        const webhookUrl =
+            'https://thekeepus.onrender.com/webhooks/payos-test';
 
-        const result =
-            await payOS.webhooks.confirm(webhookUrl);
+        const response = await fetch(
+            'https://api-merchant.payos.vn/confirm-webhook',
+            {
+                method:'POST',
+
+                headers:{
+                    'Content-Type':'application/json',
+                    'x-client-id':PAYOS_CLIENT_ID,
+                    'x-api-key':PAYOS_API_KEY
+                },
+
+                body:JSON.stringify({
+                    webhookUrl
+                })
+            }
+        );
+
+        const body =
+            await response.json();
 
         console.log('');
-        console.log('✅ Đã đăng ký webhook payOS');
-        console.log(result);
+        console.log(
+            'PAYOS CONFIRM WEBHOOK STATUS:',
+            response.status
+        );
+
+        console.log(
+            'PAYOS CONFIRM WEBHOOK BODY:',
+            body
+        );
+
         console.log('');
 
-    } catch (error) {
+    }catch(error){
 
-        console.error('');
         console.error(
-            '❌ Không đăng ký được webhook payOS:',
+            'Lỗi confirm webhook:',
             error
         );
-        console.error('');
 
     }
 
@@ -1466,7 +1489,8 @@ app.listen(
         );
 
 console.log(
-    'https://thekeepus.onrender.com/webhooks/payos'
+    'Webhook đang đăng ký:',
+    'https://thekeepus.onrender.com/webhooks/payos-test'
 );
 
         console.log('');
