@@ -7,7 +7,7 @@ const { PayOS } = require('@payos/node');
 
 const app = express();
 
-app.use(express.json({ limit: '60mb' }));
+app.use(express.json({ limit: '80mb' }));
 
 /* Chặn truy cập file nhạy cảm */
 app.use((req, res, next) => {
@@ -57,13 +57,37 @@ const TELEGRAM_BOT_TOKEN =
 const TELEGRAM_CHAT_ID =
     process.env.TELEGRAM_CHAT_ID || '';
 
+const DATA_ROOT =
+    process.env.DATA_ROOT
+    ||
+    process.cwd();
+
+
 const DB_FILE =
-    path.join(process.cwd(), 'orders.json');
+    path.join(
+        DATA_ROOT,
+        'orders.json'
+    );
+
+
 const UPLOAD_ROOT =
     path.join(
-        process.cwd(),
+        DATA_ROOT,
         'uploads'
     );
+
+
+if(!fs.existsSync(DATA_ROOT)){
+
+    fs.mkdirSync(
+        DATA_ROOT,
+        {
+            recursive:true
+        }
+    );
+
+}
+
 
 if(!fs.existsSync(UPLOAD_ROOT)){
 
@@ -382,237 +406,6 @@ function saveOrderFiles(
     };
 
 }
-function getSafeExtension(
-    filename,
-    mimeType
-){
-
-    let ext =
-        String(filename || '')
-        .split('.')
-        .pop()
-        .toLowerCase();
-
-
-    const allowed = [
-        'jpg',
-        'jpeg',
-        'png',
-        'heic',
-        'heif'
-    ];
-
-
-    if(allowed.includes(ext)){
-        return ext;
-    }
-
-
-    const mimeMap = {
-
-        'image/jpeg':'jpg',
-        'image/png':'png',
-        'image/heic':'heic',
-        'image/heif':'heif'
-
-    };
-
-
-    return (
-        mimeMap[mimeType]
-        ||
-        'jpg'
-    );
-}
-
-
-function saveDataUrl(
-    dataUrl,
-    outputPath
-){
-
-    if(
-        !dataUrl
-        ||
-        typeof dataUrl !== 'string'
-    ){
-        return false;
-    }
-
-
-    const match =
-        dataUrl.match(
-            /^data:([^;]+);base64,(.+)$/
-        );
-
-
-    if(!match){
-        return false;
-    }
-
-
-    const buffer =
-        Buffer.from(
-            match[2],
-            'base64'
-        );
-
-
-    fs.writeFileSync(
-        outputPath,
-        buffer
-    );
-
-
-    return true;
-}
-
-
-function saveOrderFiles(
-    code,
-    design
-){
-
-    const orderFolder =
-        path.join(
-            UPLOAD_ROOT,
-            code
-        );
-
-
-    fs.mkdirSync(
-        orderFolder,
-        {
-            recursive:true
-        }
-    );
-
-
-    /* =========================
-       ẢNH FINAL
-    ========================= */
-
-    let finalImage = '';
-
-
-    if(design.previewImage){
-
-        const finalFilename =
-            'final.jpg';
-
-
-        const finalPath =
-            path.join(
-                orderFolder,
-                finalFilename
-            );
-
-
-        if(
-            saveDataUrl(
-                design.previewImage,
-                finalPath
-            )
-        ){
-
-            finalImage =
-                `/admin-files/${code}/${finalFilename}`;
-
-        }
-
-    }
-
-
-    /* =========================
-       STICKER KHÁCH UPLOAD
-    ========================= */
-
-    const savedStickers = {};
-
-
-    const stickers =
-        design.uploadedStickers
-        || {};
-
-
-    [
-        'left',
-        'center',
-        'right'
-    ].forEach(position=>{
-
-        const item =
-            stickers[position];
-
-
-        if(
-            !item
-            ||
-            !item.data
-        ){
-            return;
-        }
-
-
-        const extension =
-            getSafeExtension(
-                item.name,
-                item.type
-            );
-
-
-        const filename =
-            `sticker-${position}.${extension}`;
-
-
-        const outputPath =
-            path.join(
-                orderFolder,
-                filename
-            );
-
-
-        if(
-            saveDataUrl(
-                item.data,
-                outputPath
-            )
-        ){
-
-            savedStickers[position] = {
-
-                originalName:
-                    item.name
-                    ||
-                    filename,
-
-                type:
-                    item.type
-                    || '',
-
-                extension,
-
-                file:
-                    `/admin-files/${code}/${filename}`
-
-            };
-
-        }
-
-    });
-
-
-    return {
-
-        finalImage,
-
-        stickers:
-            savedStickers
-
-    };
-
-}
-
 function createOrderCode() {
 
     const now = new Date();
