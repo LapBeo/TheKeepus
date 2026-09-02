@@ -125,7 +125,7 @@ async function registerPayOSWebhook() {
     try {
 
 const webhookUrl =
-    'https://thekeepus.onrender.com/webhooks/payos';
+    'https://thekeepus.onrender.com/webhooks/payos-test';
 
         const result =
             await payOS.webhooks.confirm(webhookUrl);
