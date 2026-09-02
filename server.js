@@ -946,7 +946,16 @@ app.get(
 /* =========================
    3. WEBHOOK PAYOS
 ========================= */
+app.get('/healthz', (req, res) => {
+    res.status(200).send('OK');
+});
 
+app.post('/webhooks/payos-test', (req, res) => {
+    console.log('PAYOS TEST WEBHOOK:', req.body);
+    res.status(200).json({
+        success:true
+    });
+});
 app.post(
     '/webhooks/payos',
     async (req, res) => {
