@@ -319,7 +319,7 @@ header{background:#fff;border-bottom:1px solid var(--border)}
 <div class="empty" id="emptyPage" style="display:none">
   <h2>Chưa có bản thiết kế để thanh toán</h2>
   <p>Hãy quay lại sản phẩm và chốt thiết kế trước.</p>
-  <a href="test.html">Về trang chính</a>
+<a href="index.html">Về trang chính</a>
 </div>
 
 <!-- ===== POPUP THANH TOÁN CỌC ===== -->
@@ -381,19 +381,75 @@ const pageHead = document.getElementById('pageHead');
 
 
 function initCheckout(){
-  document.getElementById('finalPreview').src = order.previewImage || '';
-  document.getElementById('productName').textContent = order.product.name || 'Sản phẩm';
-  document.getElementById('productPrice').textContent = formatMoney(order.product.price || 0);
-  document.getElementById('summaryProduct').textContent = formatMoney(order.product.price || 0);
-  renderOptions();
 
-  if(order.note){
-    const noteBox = document.getElementById('designNoteBox');
-    noteBox.style.display = 'block';
-    noteBox.textContent = 'Ghi chú thiết kế: ' + order.note;
+  const finalPreview =
+    document.getElementById(
+      'finalPreview'
+    );
+
+  if(order.previewImage){
+
+    finalPreview.src =
+      order.previewImage;
+
+    finalPreview.style.display =
+      'block';
+
+  }else{
+
+    finalPreview.style.display =
+      'none';
+
   }
 
+
+  document
+    .getElementById('productName')
+    .textContent =
+      order.product.name
+      ||
+      'Sản phẩm';
+
+
+  document
+    .getElementById('productPrice')
+    .textContent =
+      formatMoney(
+        order.product.price || 0
+      );
+
+
+  document
+    .getElementById('summaryProduct')
+    .textContent =
+      formatMoney(
+        order.product.price || 0
+      );
+
+
+  renderOptions();
+
+
+  if(order.note){
+
+    const noteBox =
+      document.getElementById(
+        'designNoteBox'
+      );
+
+    noteBox.style.display =
+      'block';
+
+    noteBox.textContent =
+      'Ghi chú thiết kế: '
+      +
+      order.note;
+
+  }
+
+
   updateTotal();
+
 }
 
 function renderOptions(){

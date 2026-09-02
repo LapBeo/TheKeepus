@@ -75,7 +75,11 @@ const UPLOAD_ROOT =
         DATA_ROOT,
         'uploads'
     );
-
+const TEMP_UPLOAD_ROOT =
+    path.join(
+        DATA_ROOT,
+        'temp-uploads'
+    );
 
 if(!fs.existsSync(DATA_ROOT)){
 
@@ -99,7 +103,16 @@ if(!fs.existsSync(UPLOAD_ROOT)){
     );
 
 }
+if(!fs.existsSync(TEMP_UPLOAD_ROOT)){
 
+    fs.mkdirSync(
+        TEMP_UPLOAD_ROOT,
+        {
+            recursive:true
+        }
+    );
+
+}
 
 /* =========================
    PAYOS
@@ -252,6 +265,19 @@ function getSafeExtension(
     );
 }
 
+function createTempToken(){
+
+    return (
+        Date.now().toString(36)
+        +
+        '-'
+        +
+        Math.random()
+            .toString(36)
+            .slice(2,12)
+    );
+
+}
 
 function saveDataUrl(
     dataUrl,
@@ -290,6 +316,77 @@ function saveDataUrl(
 }
 
 
+function getTempFilePath(item){
+
+    if(
+        !item
+        ||
+        !item.token
+        
+    ){
+        return '';
+    }
+
+    const safeToken =
+        String(item.token)
+        .replace(
+            /[^a-z0-9\-]/gi,
+            ''
+        );
+
+    const safeExtension =
+        getSafeExtension(
+            item.name,
+            item.type
+        );
+
+    return path.join(
+        TEMP_UPLOAD_ROOT,
+        safeToken
+        +
+        '.'
+        +
+        safeExtension
+    );
+
+}
+
+
+function moveTempFile(
+    item,
+    outputPath
+){
+
+    const tempPath =
+        getTempFilePath(item);
+
+    if(
+        !tempPath
+        ||
+        !fs.existsSync(tempPath)
+    ){
+        return false;
+    }
+
+    fs.copyFileSync(
+        tempPath,
+        outputPath
+    );
+
+    try{
+        fs.unlinkSync(tempPath);
+    }catch(error){
+        console.warn(
+            'Không xóa được file tạm:',
+            tempPath
+        );
+    }
+
+    return true;
+
+}
+
+
 function saveOrderFiles(
     code,
     design
@@ -309,105 +406,197 @@ function saveOrderFiles(
     );
 
 
+    /*
+    =========================
+    FINAL CÓ STICKER
+    =========================
+    */
+
     let finalImage = '';
 
-    if(design.previewImage){
+    const finalWithStickersItem = {
 
-        const finalFilename =
-            'final.jpg';
+        token:
+            design.previewImageToken
+            ||
+            '',
 
-        const finalPath =
-            path.join(
-                orderFolder,
-                finalFilename
-            );
+        name:
+            'final-with-stickers.jpg',
 
-        if(
-            saveDataUrl(
-                design.previewImage,
-                finalPath
-            )
-        ){
+        type:
+            'image/jpeg',
 
-            finalImage =
-                `/admin-files/${code}/${finalFilename}`;
+        extension:
+            'jpg'
 
-        }
+    };
+
+
+    const finalWithStickersFilename =
+        'final-with-stickers.jpg';
+
+
+    const finalWithStickersPath =
+        path.join(
+            orderFolder,
+            finalWithStickersFilename
+        );
+
+
+    if(
+        moveTempFile(
+            finalWithStickersItem,
+            finalWithStickersPath
+        )
+    ){
+
+        finalImage =
+            `/admin-files/${code}/${finalWithStickersFilename}`;
 
     }
 
+
+    /*
+    =========================
+    FINAL CHỈ THÔNG TIN
+    =========================
+    */
+
+    let finalInfoImage = '';
+
+    const finalInfoItem = {
+
+        token:
+            design.previewInfoToken
+            ||
+            '',
+
+        name:
+            'final-info-only.jpg',
+
+        type:
+            'image/jpeg',
+
+        extension:
+            'jpg'
+
+    };
+
+
+    const finalInfoFilename =
+        'final-info-only.jpg';
+
+
+    const finalInfoPath =
+        path.join(
+            orderFolder,
+            finalInfoFilename
+        );
+
+
+    if(
+        moveTempFile(
+            finalInfoItem,
+            finalInfoPath
+        )
+    ){
+
+        finalInfoImage =
+            `/admin-files/${code}/${finalInfoFilename}`;
+
+    }
+
+
+    /*
+    =========================
+    STICKER GỐC
+    =========================
+    */
 
     const savedStickers = {};
 
     const stickers =
         design.uploadedStickers
-        || {};
+        ||
+        {};
+
 
     [
         'left',
         'center',
         'right'
-    ].forEach(position=>{
+    ]
+    .forEach(
+        position => {
 
-        const item =
-            stickers[position];
+            const item =
+                stickers[position];
 
-        if(
-            !item
-            ||
-            !item.data
-        ){
-            return;
-        }
+            if(
+                !item
+                ||
+                !item.token
+            ){
+                return;
+            }
 
-        const extension =
-            getSafeExtension(
-                item.name,
-                item.type
-            );
 
-        const filename =
-            `sticker-${position}.${extension}`;
-
-        const outputPath =
-            path.join(
-                orderFolder,
-                filename
-            );
-
-        if(
-            saveDataUrl(
-                item.data,
-                outputPath
-            )
-        ){
-
-            savedStickers[position] = {
-
-                originalName:
-                    item.name
-                    ||
-                    filename,
-
-                type:
+            const extension =
+                getSafeExtension(
+                    item.name,
                     item.type
-                    || '',
+                );
 
-                extension,
 
-                file:
-                    `/admin-files/${code}/${filename}`
+            const filename =
+                `sticker-${position}.${extension}`;
 
-            };
+
+            const outputPath =
+                path.join(
+                    orderFolder,
+                    filename
+                );
+
+
+            if(
+                moveTempFile(
+                    item,
+                    outputPath
+                )
+            ){
+
+                savedStickers[position] = {
+
+                    originalName:
+                        item.name
+                        ||
+                        filename,
+
+                    type:
+                        item.type
+                        ||
+                        '',
+
+                    extension,
+
+                    file:
+                        `/admin-files/${code}/${filename}`
+
+                };
+
+            }
 
         }
-
-    });
+    );
 
 
     return {
 
         finalImage,
+
+        finalInfoImage,
 
         stickers:
             savedStickers
@@ -554,7 +743,230 @@ function publicOrder(order) {
     };
 }
 
+/* =========================
+   TEMP UPLOAD
+========================= */
 
+app.post(
+    '/api/temp-upload',
+    (req,res)=>{
+
+        try{
+
+            const {
+                dataUrl,
+                name,
+                type,
+                kind,
+                side
+            } = req.body || {};
+
+
+            if(
+                !dataUrl
+                ||
+                typeof dataUrl !== 'string'
+            ){
+
+                return res
+                    .status(400)
+                    .json({
+                        success:false,
+                        message:
+                            'Thiếu dữ liệu file.'
+                    });
+
+            }
+
+
+            const allowedKinds = [
+                'sticker',
+                'final-with-stickers',
+                'final-info-only'
+            ];
+
+
+            if(
+                !allowedKinds.includes(kind)
+            ){
+
+                return res
+                    .status(400)
+                    .json({
+                        success:false,
+                        message:
+                            'Loại file không hợp lệ.'
+                    });
+
+            }
+
+
+            const extension =
+                getSafeExtension(
+                    name,
+                    type
+                );
+
+
+            const token =
+                createTempToken();
+
+
+            const filename =
+                token
+                +
+                '.'
+                +
+                extension;
+
+
+            const filePath =
+                path.join(
+                    TEMP_UPLOAD_ROOT,
+                    filename
+                );
+
+
+            const saved =
+                saveDataUrl(
+                    dataUrl,
+                    filePath
+                );
+
+
+            if(!saved){
+
+                return res
+                    .status(400)
+                    .json({
+                        success:false,
+                        message:
+                            'Dữ liệu ảnh không hợp lệ.'
+                    });
+
+            }
+
+
+            return res.json({
+
+                success:true,
+
+                file:{
+
+    token,
+
+    name:
+        String(name || ''),
+
+    type:
+        String(type || ''),
+
+    extension,
+
+    kind,
+
+    side:
+        String(side || ''),
+
+    previewUrl:
+        '/temp-files/'
+        +
+        token
+        +
+        '.'
+        +
+        extension
+
+}
+
+            });
+
+
+        }catch(error){
+
+            console.error(
+                'Temp upload lỗi:',
+                error
+            );
+
+
+            return res
+                .status(500)
+                .json({
+                    success:false,
+                    message:
+                        'Không upload được file.'
+                });
+
+        }
+
+    }
+);
+/* =========================
+   XEM FILE TẠM
+========================= */
+
+app.get(
+    '/temp-files/:filename',
+    (req,res)=>{
+
+        try{
+
+            const filename =
+                path.basename(
+                    req.params.filename || ''
+                );
+
+
+            /*
+            Chỉ cho phép tên token an toàn
+            */
+            if(
+                !/^[a-z0-9\-]+\.(jpg|jpeg|png|heic|heif)$/i
+                    .test(filename)
+            ){
+
+                return res
+                    .sendStatus(404);
+
+            }
+
+
+            const filePath =
+                path.join(
+                    TEMP_UPLOAD_ROOT,
+                    filename
+                );
+
+
+            if(
+                !fs.existsSync(filePath)
+            ){
+
+                return res
+                    .sendStatus(404);
+
+            }
+
+
+            res.sendFile(
+                filePath
+            );
+
+
+        }catch(error){
+
+            console.error(
+                'Không đọc được file tạm:',
+                error
+            );
+
+            res.sendStatus(404);
+
+        }
+
+    }
+);
 /* =========================
    1. TẠO ĐƠN
 ========================= */
@@ -752,6 +1164,15 @@ const cleanDesign = {
 
     previewImage:
         savedFiles.finalImage,
+
+    previewInfoImage:
+        savedFiles.finalInfoImage,
+
+    previewImageToken:
+        '',
+
+    previewInfoToken:
+        '',
 
     uploadedStickers:
         savedFiles.stickers

@@ -403,7 +403,7 @@ header{
 <header>
   <div class="wrap nav">
     <a class="logo" href="#">The.Keepus</a>
-    <a class="back" href="test.html#danh-muc">← Quay lại trang chính</a>
+    <a class="back" href="index.html#danh-muc">← Quay lại trang chính</a>
   </div>
 </header>
 
@@ -788,9 +788,9 @@ let charmLeftUploadedURL = '';
 let charmCenterUploadedURL = '';
 let charmRightUploadedURL = '';
 
-let charmLeftUploadedData = '';
-let charmCenterUploadedData = '';
-let charmRightUploadedData = '';
+let charmLeftTempFile = null;
+let charmCenterTempFile = null;
+let charmRightTempFile = null;
 
 let charmLeftUploadedName = '';
 let charmCenterUploadedName = '';
@@ -819,22 +819,22 @@ function fileToDataURL(file){
 }
 
 
-function isAllowedStickerFile(file){
+function getFileExtension(filename){
 
-    if(!file) return false;
-
-    const allowedTypes = [
-        'image/png',
-        'image/jpeg',
-        'image/heic',
-        'image/heif'
-    ];
-
-    const extension =
-        file.name
+    return String(filename || '')
         .split('.')
         .pop()
         .toLowerCase();
+
+}
+function isAllowedStickerFile(file){
+
+    if(!file){
+        return false;
+    }
+
+    const extension =
+        getFileExtension(file.name);
 
     const allowedExtensions = [
         'jpg',
@@ -844,21 +844,22 @@ function isAllowedStickerFile(file){
         'heif'
     ];
 
+    const allowedTypes = [
+        'image/jpeg',
+        'image/png',
+        'image/heic',
+        'image/heif',
+        'image/heic-sequence',
+        'image/heif-sequence'
+    ];
+
     return (
-        allowedTypes.includes(file.type)
-        ||
         allowedExtensions.includes(extension)
+        ||
+        allowedTypes.includes(file.type)
     );
-}
-function getFileExtension(filename){
-
-    return String(filename || '')
-        .split('.')
-        .pop()
-        .toLowerCase();
 
 }
-
 
 function isHEICFile(file){
 
@@ -873,6 +874,10 @@ function isHEICFile(file){
         file.type === 'image/heic'
         ||
         file.type === 'image/heif'
+        ||
+        file.type === 'image/heic-sequence'
+        ||
+        file.type === 'image/heif-sequence'
     );
 
 }
@@ -880,10 +885,6 @@ function isHEICFile(file){
 
 async function createStickerPreview(file){
 
-    /*
-    JPG / JPEG / PNG:
-    preview trực tiếp file gốc.
-    */
     if(!isHEICFile(file)){
 
         return URL.createObjectURL(file);
@@ -891,11 +892,6 @@ async function createStickerPreview(file){
     }
 
 
-    /*
-    HEIC / HEIF:
-    convert tạm sang JPG để trình duyệt hiển thị.
-    File gốc vẫn được giữ trong UploadedData.
-    */
     if(typeof heic2any !== 'function'){
 
         throw new Error(
@@ -907,13 +903,9 @@ async function createStickerPreview(file){
 
     let converted =
         await heic2any({
-
             blob:file,
-
             toType:'image/jpeg',
-
-            quality:0.92
-
+            quality:0.9
         });
 
 
@@ -925,10 +917,66 @@ async function createStickerPreview(file){
     }
 
 
+    if(!(converted instanceof Blob)){
+
+        throw new Error(
+            'Không chuyển đổi được ảnh HEIC.'
+        );
+
+    }
+
+
     return URL.createObjectURL(
         converted
     );
 
+}
+async function uploadTempFile({
+    dataUrl,
+    name,
+    type,
+    kind,
+    side
+}){
+
+    const response =
+        await fetch(
+            '/api/temp-upload',
+            {
+                method:'POST',
+
+                headers:{
+                    'Content-Type':
+                        'application/json'
+                },
+
+                body:
+                    JSON.stringify({
+                        dataUrl,
+                        name,
+                        type,
+                        kind,
+                        side
+                    })
+            }
+        );
+
+    const result =
+        await response.json();
+
+    if(
+        !response.ok
+        ||
+        !result.success
+    ){
+        throw new Error(
+            result.message
+            ||
+            'Không upload được file.'
+        );
+    }
+
+    return result.file;
 }
 function updateUniformBackground(){
 
@@ -980,234 +1028,420 @@ document.getElementById('chooseOther').addEventListener('click',()=>{
 shirtType.addEventListener('change', updateUniformBackground);
 rankType.addEventListener('change', updateUniformBackground);
 
-function bindCharm(selectEl, uploadEl, usePresetBtn, clearBtn, boxEl, demoEl, side){
+function bindCharm(
+    selectEl,
+    uploadEl,
+    usePresetBtn,
+    clearBtn,
+    boxEl,
+    demoEl,
+    side
+){
 
     function getUploadedURL(){
-        if(side === 'left') return charmLeftUploadedURL;
-        if(side === 'center') return charmCenterUploadedURL;
-        if(side === 'right') return charmRightUploadedURL;
+
+        if(side === 'left'){
+            return charmLeftUploadedURL;
+        }
+
+        if(side === 'center'){
+            return charmCenterUploadedURL;
+        }
+
+        if(side === 'right'){
+            return charmRightUploadedURL;
+        }
+
         return '';
+
     }
+
 
     function setUploadedURL(value){
-        if(side === 'left') charmLeftUploadedURL = value;
-        if(side === 'center') charmCenterUploadedURL = value;
-        if(side === 'right') charmRightUploadedURL = value;
+
+        if(side === 'left'){
+            charmLeftUploadedURL = value;
+        }
+
+        if(side === 'center'){
+            charmCenterUploadedURL = value;
+        }
+
+        if(side === 'right'){
+            charmRightUploadedURL = value;
+        }
+
     }
+
 
     function updateCharm(){
-        const uploadedURL = getUploadedURL();
 
-        /* nếu có ảnh khách upload thì ưu tiên ảnh khách */
+        const uploadedURL =
+            getUploadedURL();
+
+
         if(uploadedURL){
-            demoEl.src = uploadedURL;
-            boxEl.style.display = 'block';
+
+            demoEl.src =
+                uploadedURL;
+
+            boxEl.style.display =
+                'block';
+
             return;
+
         }
 
-        /* nếu không có ảnh upload thì lấy charm có sẵn */
+
         if(selectEl.value){
-            demoEl.src = selectEl.value;
-            boxEl.style.display = 'block';
+
+            demoEl.src =
+                selectEl.value;
+
+            boxEl.style.display =
+                'block';
+
         }else{
+
             demoEl.src = '';
-            boxEl.style.display = 'none';
+
+            boxEl.style.display =
+                'none';
+
         }
-    }
 
-    /* đổi charm có sẵn */
-    selectEl.addEventListener('change', function(){
-        updateCharm();
-    });
-
-    /* upload ảnh riêng của khách */
-    uploadEl.addEventListener('change', async function(){
-
-    const file = this.files[0];
-
-    if(!file){
-        return;
     }
 
 
-    if(!isAllowedStickerFile(file)){
+    selectEl.addEventListener(
+        'change',
+        function(){
 
-        alert(
-            'Chỉ hỗ trợ ảnh JPG, JPEG, PNG, HEIC hoặc HEIF.'
-        );
+            updateCharm();
 
-        this.value = '';
-
-        return;
-    }
+        }
+    );
 
 
     /*
-    Giới hạn ví dụ 15MB/file.
-    Có thể tăng sau nếu cần.
+    ===============================
+    KHÁCH UPLOAD STICKER
+    ===============================
     */
-    const MAX_FILE_SIZE =
-        15 * 1024 * 1024;
 
-    if(file.size > MAX_FILE_SIZE){
+    uploadEl.addEventListener(
+        'change',
+        async function(){
 
-        alert(
-            'Ảnh quá lớn. Vui lòng chọn ảnh dưới 15MB.'
-        );
-
-        this.value = '';
-
-        return;
-    }
+            const file =
+                this.files[0];
 
 
-    try{
-
-        /*
-Lưu nguyên file khách gửi.
-*/
-const dataURL =
-    await fileToDataURL(file);
+            if(!file){
+                return;
+            }
 
 
-/*
-Tạo ảnh để hiển thị:
-- JPG/PNG dùng trực tiếp
-- HEIC/HEIF tự đổi sang JPG
-*/
-const previewURL =
-    await createStickerPreview(file);
+            if(!isAllowedStickerFile(file)){
+
+                alert(
+                    'Chỉ hỗ trợ JPG, JPEG, PNG, HEIC hoặc HEIF.'
+                );
+
+                this.value = '';
+
+                return;
+
+            }
 
 
-setUploadedURL(
-    previewURL
-);
+            const MAX_FILE_SIZE =
+                15 * 1024 * 1024;
 
-        if(side === 'left'){
 
-            charmLeftUploadedData =
-                dataURL;
+            if(file.size > MAX_FILE_SIZE){
 
-            charmLeftUploadedName =
-                file.name;
+                alert(
+                    'Ảnh quá lớn. Vui lòng chọn ảnh dưới 15MB.'
+                );
 
-            charmLeftUploadedType =
-                file.type || '';
+                this.value = '';
+
+                return;
+
+            }
+
+
+            try{
+
+                /*
+                1. HIỂN THỊ DEMO NGAY
+                */
+
+                const previewURL =
+                    await createStickerPreview(
+                        file
+                    );
+
+
+                setUploadedURL(
+                    previewURL
+                );
+
+
+                updateCharm();
+
+
+                /*
+                2. ĐỌC FILE GỐC
+                */
+
+                const dataURL =
+                    await fileToDataURL(
+                        file
+                    );
+
+
+                /*
+                3. UPLOAD LÊN SERVER
+                */
+
+                const tempFile =
+                    await uploadTempFile({
+
+                        dataUrl:
+                            dataURL,
+
+                        name:
+                            file.name,
+
+                        type:
+                            file.type || '',
+
+                        kind:
+                            'sticker',
+
+                        side:
+                            side
+
+                    });
+
+
+                /*
+                4. CHỈ GIỮ TOKEN
+                */
+
+                if(side === 'left'){
+
+                    charmLeftTempFile =
+                        tempFile;
+
+                    charmLeftUploadedName =
+                        file.name;
+
+                    charmLeftUploadedType =
+                        file.type || '';
+
+                }
+
+
+                if(side === 'center'){
+
+                    charmCenterTempFile =
+                        tempFile;
+
+                    charmCenterUploadedName =
+                        file.name;
+
+                    charmCenterUploadedType =
+                        file.type || '';
+
+                }
+
+
+                if(side === 'right'){
+
+                    charmRightTempFile =
+                        tempFile;
+
+                    charmRightUploadedName =
+                        file.name;
+
+                    charmRightUploadedType =
+                        file.type || '';
+
+                }
+
+
+                console.log(
+                    'Sticker upload thành công:',
+                    side,
+                    tempFile
+                );
+
+
+            }catch(error){
+
+                console.error(
+                    'Upload sticker lỗi:',
+                    error
+                );
+
+
+                setUploadedURL('');
+
+                updateCharm();
+
+
+                alert(
+                    'Không upload được ảnh.\n\n'
+                    +
+                    (
+                        error?.message
+                        ||
+                        'Vui lòng thử lại.'
+                    )
+                );
+
+            }
 
         }
+    );
 
 
-        if(side === 'center'){
+    /*
+    ===============================
+    QUAY VỀ CHARM CÓ SẴN
+    ===============================
+    */
 
-            charmCenterUploadedData =
-                dataURL;
+    usePresetBtn.addEventListener(
+        'click',
+        function(){
 
-            charmCenterUploadedName =
-                file.name;
+            setUploadedURL('');
 
-            charmCenterUploadedType =
-                file.type || '';
+            uploadEl.value = '';
+
+
+            if(side === 'left'){
+
+                charmLeftTempFile =
+                    null;
+
+                charmLeftUploadedName =
+                    '';
+
+                charmLeftUploadedType =
+                    '';
+
+            }
+
+
+            if(side === 'center'){
+
+                charmCenterTempFile =
+                    null;
+
+                charmCenterUploadedName =
+                    '';
+
+                charmCenterUploadedType =
+                    '';
+
+            }
+
+
+            if(side === 'right'){
+
+                charmRightTempFile =
+                    null;
+
+                charmRightUploadedName =
+                    '';
+
+                charmRightUploadedType =
+                    '';
+
+            }
+
+
+            updateCharm();
 
         }
+    );
 
 
-        if(side === 'right'){
+    /*
+    ===============================
+    XÓA CHARM
+    ===============================
+    */
 
-            charmRightUploadedData =
-                dataURL;
+    clearBtn.addEventListener(
+        'click',
+        function(){
 
-            charmRightUploadedName =
-                file.name;
+            setUploadedURL('');
 
-            charmRightUploadedType =
-                file.type || '';
+            uploadEl.value = '';
+
+            selectEl.value = '';
+
+
+            if(side === 'left'){
+
+                charmLeftTempFile =
+                    null;
+
+                charmLeftUploadedName =
+                    '';
+
+                charmLeftUploadedType =
+                    '';
+
+            }
+
+
+            if(side === 'center'){
+
+                charmCenterTempFile =
+                    null;
+
+                charmCenterUploadedName =
+                    '';
+
+                charmCenterUploadedType =
+                    '';
+
+            }
+
+
+            if(side === 'right'){
+
+                charmRightTempFile =
+                    null;
+
+                charmRightUploadedName =
+                    '';
+
+                charmRightUploadedType =
+                    '';
+
+            }
+
+
+            demoEl.src = '';
+
+            boxEl.style.display =
+                'none';
 
         }
+    );
 
-
-        updateCharm();
-
-
-    }catch(error){
-
-        console.error(
-            'Không đọc được ảnh:',
-            error
-        );
-
-        alert(
-            'Không đọc được ảnh này. Vui lòng thử ảnh khác.'
-        );
-
-    }
-
-});
-
-    /* bỏ ảnh upload riêng, quay lại charm có sẵn */
-    usePresetBtn.addEventListener('click', function(){
-       setUploadedURL('');
-uploadEl.value = '';
-
-if(side === 'left'){
-
-    charmLeftUploadedData = '';
-    charmLeftUploadedName = '';
-    charmLeftUploadedType = '';
-
-}
-
-if(side === 'center'){
-
-    charmCenterUploadedData = '';
-    charmCenterUploadedName = '';
-    charmCenterUploadedType = '';
-
-}
-
-if(side === 'right'){
-
-    charmRightUploadedData = '';
-    charmRightUploadedName = '';
-    charmRightUploadedType = '';
-
-}
-
-updateCharm();
-    });
-
-    /* xóa hoàn toàn charm */
-    clearBtn.addEventListener('click', function(){
-        setUploadedURL('');
-        uploadEl.value = '';
-        selectEl.value = '';
-if(side === 'left'){
-
-    charmLeftUploadedData = '';
-    charmLeftUploadedName = '';
-    charmLeftUploadedType = '';
-
-}
-
-if(side === 'center'){
-
-    charmCenterUploadedData = '';
-    charmCenterUploadedName = '';
-    charmCenterUploadedType = '';
-
-}
-
-if(side === 'right'){
-
-    charmRightUploadedData = '';
-    charmRightUploadedName = '';
-    charmRightUploadedType = '';
-
-}
-        demoEl.src = '';
-        boxEl.style.display = 'none';
-    });
 
     return updateCharm;
+
 }
 
 const updateCharmLeft = bindCharm(
@@ -1305,26 +1539,49 @@ makeCharmResizable(charmBoxRight);
 
 async function submitOrder(){
 
-    const submitBtn = document.getElementById('goCheckout');
-    const oldText = submitBtn.textContent;
+    const submitBtn =
+        document.getElementById('goCheckout');
+
+    const oldText =
+        submitBtn.textContent;
+
 
     try{
 
-        submitBtn.disabled = true;
-        submitBtn.textContent = 'Đang tạo bản final...';
+        submitBtn.disabled =
+            true;
+
+        submitBtn.textContent =
+            'Đang tạo bản final...';
 
 
-        /* BỎ KHUNG CHỌN TRƯỚC KHI CHỤP */
+        /*
+        ==================================
+        BỎ VIỀN CHỌN TRƯỚC KHI CHỤP
+        ==================================
+        */
+
         document
             .querySelectorAll('.selected')
-            .forEach(el => el.classList.remove('selected'));
+            .forEach(
+                el => el.classList.remove('selected')
+            );
 
 
         const demoFrame =
-            document.querySelector('.demo-frame');
+            document.querySelector(
+                '.demo-frame'
+            );
 
 
-        const canvas =
+        /*
+        ==================================
+        FINAL 1:
+        CÓ ĐẦY ĐỦ STICKER
+        ==================================
+        */
+
+        const canvasWithStickers =
             await html2canvas(
                 demoFrame,
                 {
@@ -1336,12 +1593,154 @@ async function submitOrder(){
             );
 
 
-        const previewImage =
-            canvas.toDataURL(
+        const finalWithStickersData =
+            canvasWithStickers.toDataURL(
                 'image/jpeg',
-                0.9
+                0.88
             );
 
+
+        /*
+        Upload final có sticker
+        lên Render
+        */
+
+        const finalWithStickers =
+            await uploadTempFile({
+
+                dataUrl:
+                    finalWithStickersData,
+
+                name:
+                    'final-with-stickers.jpg',
+
+                type:
+                    'image/jpeg',
+
+                kind:
+                    'final-with-stickers',
+
+                side:
+                    ''
+
+            });
+
+
+        /*
+        ==================================
+        TẠM ẨN TOÀN BỘ STICKER
+        ==================================
+        */
+
+        const charmBoxesForFinal =
+            document.querySelectorAll(
+                '.charm-box'
+            );
+
+
+        const oldVisibility =
+            Array
+            .from(charmBoxesForFinal)
+            .map(
+                box =>
+                    box.style.visibility
+            );
+
+
+        charmBoxesForFinal
+            .forEach(
+                box => {
+
+                    box.style.visibility =
+                        'hidden';
+
+                }
+            );
+
+
+        /*
+        ==================================
+        FINAL 2:
+        CHỈ CÓ NỀN + THÔNG TIN
+        KHÔNG CÓ STICKER
+        ==================================
+        */
+
+        let finalInfoOnly;
+
+
+        try{
+
+            const canvasInfoOnly =
+                await html2canvas(
+                    demoFrame,
+                    {
+                        backgroundColor:null,
+                        scale:2,
+                        useCORS:true,
+                        logging:false
+                    }
+                );
+
+
+            const finalInfoOnlyData =
+                canvasInfoOnly.toDataURL(
+                    'image/jpeg',
+                    0.88
+                );
+
+
+            /*
+            Upload final chỉ thông tin
+            lên Render
+            */
+
+            finalInfoOnly =
+                await uploadTempFile({
+
+                    dataUrl:
+                        finalInfoOnlyData,
+
+                    name:
+                        'final-info-only.jpg',
+
+                    type:
+                        'image/jpeg',
+
+                    kind:
+                        'final-info-only',
+
+                    side:
+                        ''
+
+                });
+
+
+        }finally{
+
+            /*
+            Hiện sticker trở lại
+            dù có lỗi hay không
+            */
+
+            charmBoxesForFinal
+                .forEach(
+                    (box,index) => {
+
+                        box.style.visibility =
+                            oldVisibility[index];
+
+                    }
+                );
+
+        }
+
+
+        /*
+        ==================================
+        LẤY GIÁ SẢN PHẨM
+        ==================================
+        */
 
         const rawPrice =
             selectedPrice
@@ -1350,88 +1749,141 @@ async function submitOrder(){
             .replace(/[^\d]/g,'');
 
 
+        /*
+        ==================================
+        TẠO DỮ LIỆU ĐỂ GỬI CHECKOUT
+        ==================================
+        */
+
         const orderData = {
 
-            version:1,
+            version:2,
+
 
             product:{
+
                 name:
-                    selectedName.textContent.trim(),
+                    selectedName
+                    .textContent
+                    .trim(),
 
                 price:
-                    Number(rawPrice) || 0
+                    Number(rawPrice)
+                    ||
+                    0
+
             },
 
 
-            /* ẢNH FINAL */
+            /*
+            ==============================
+            FINAL CÓ STICKER
+            ==============================
+            */
+
             previewImage:
-                previewImage,
-              uploadedStickers:{
+                finalWithStickers
+                ?.previewUrl
+                ||
+                '',
 
-    left:{
-        name:
-            charmLeftUploadedName,
+            previewImageToken:
+                finalWithStickers
+                ?.token
+                ||
+                '',
 
-        type:
-            charmLeftUploadedType,
 
-        data:
-            charmLeftUploadedData
-    },
+            /*
+            ==============================
+            FINAL CHỈ THÔNG TIN
+            ==============================
+            */
 
-    center:{
-        name:
-            charmCenterUploadedName,
+            previewInfoImage:
+                finalInfoOnly
+                ?.previewUrl
+                ||
+                '',
 
-        type:
-            charmCenterUploadedType,
+            previewInfoToken:
+                finalInfoOnly
+                ?.token
+                ||
+                '',
 
-        data:
-            charmCenterUploadedData
-    },
 
-    right:{
-        name:
-            charmRightUploadedName,
+            /*
+            ==============================
+            FILE STICKER GỐC
+            Chỉ lưu token/file metadata
+            KHÔNG lưu base64
+            ==============================
+            */
 
-        type:
-            charmRightUploadedType,
+            uploadedStickers:{
 
-        data:
-            charmRightUploadedData
-    }
+                left:
+                    charmLeftTempFile,
 
-},
+                center:
+                    charmCenterTempFile,
 
-            /* THÔNG TIN MẪU */
+                right:
+                    charmRightTempFile
+
+            },
+
+
+            /*
+            ==============================
+            THÔNG TIN LỰA CHỌN
+            ==============================
+            */
+
             options:[
 
                 {
-                    label:'Kiểu áo',
+
+                    label:
+                        'Kiểu áo',
 
                     value:
                         shirtType
                         .options[
                             shirtType.selectedIndex
                         ]
-                        ?.text || ''
+                        ?.text
+                        ||
+                        ''
+
                 },
 
                 {
-                    label:'Quân hàm',
+
+                    label:
+                        'Quân hàm',
 
                     value:
                         rankType
                         .options[
                             rankType.selectedIndex
                         ]
-                        ?.text || ''
+                        ?.text
+                        ||
+                        ''
+
                 }
 
             ],
 
 
-            /* NỘI DUNG KHÁCH ĐÃ THIẾT KẾ */
+            /*
+            ==============================
+            NỘI DUNG KHÁCH ĐÃ THIẾT KẾ
+            ==============================
+            */
+
             customerDesign:{
 
                 name:
@@ -1454,38 +1906,69 @@ async function submitOrder(){
 
             note:
                 document
-                .getElementById('inputShopNote')
+                .getElementById(
+                    'inputShopNote'
+                )
                 ?.value
-                .trim() || '',
+                .trim()
+                ||
+                '',
 
 
             createdAt:
-                new Date().toISOString()
+                new Date()
+                .toISOString()
 
         };
 
 
-        /* LƯU DỮ LIỆU CHO CHECKOUT */
+        /*
+        ==================================
+        LƯU CHO CHECKOUT
+        Chỉ còn token nhỏ
+        không còn ảnh base64
+        ==================================
+        */
+
         sessionStorage.setItem(
             'keepusCheckout',
-            JSON.stringify(orderData)
+            JSON.stringify(
+                orderData
+            )
         );
 
 
-        /* CHUYỂN TRANG */
+        /*
+        ==================================
+        CHUYỂN SANG CHECKOUT
+        ==================================
+        */
+
         window.location.href =
             'checkout.html';
 
 
     }catch(error){
 
-        console.error(error);
-
-        alert(
-            'Không thể tạo bản final. Hãy thử lại.'
+        console.error(
+            'LỖI TẠO FINAL:',
+            error
         );
 
-        submitBtn.disabled = false;
+
+        alert(
+            'Không thể tạo bản final.\n\n'
+            +
+            (
+                error?.message
+                ||
+                'Vui lòng thử lại.'
+            )
+        );
+
+
+        submitBtn.disabled =
+            false;
 
         submitBtn.textContent =
             oldText;
