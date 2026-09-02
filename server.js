@@ -959,12 +959,6 @@ app.get('/healthz', (req, res) => {
     res.status(200).send('OK');
 });
 
-app.post('/webhooks/payos-test', (req, res) => {
-    console.log('PAYOS TEST WEBHOOK:', req.body);
-    res.status(200).json({
-        success:true
-    });
-});
 app.post(
     '/webhooks/payos',
     async (req, res) => {
@@ -1464,8 +1458,7 @@ app.listen(
         );
 
         console.log(
-            'http://localhost:'
-            + PORT
+            'http://localhost:' + PORT
         );
 
         console.log('');
@@ -1474,14 +1467,29 @@ app.listen(
             'Webhook payOS:'
         );
 
-console.log(
-    'Webhook đang đăng ký:',
-    'https://thekeepus.onrender.com/webhooks/payos-test'
-);
+        console.log(
+            'https://thekeepus.onrender.com/webhooks/payos'
+        );
 
         console.log('');
 
-        registerPayOSWebhook();
+        /*
+        Render cần vài giây để public service.
+        Chờ 15 giây rồi mới yêu cầu payOS
+        kiểm tra webhook.
+        */
+        setTimeout(
+            () => {
+
+                console.log(
+                    'Bắt đầu đăng ký webhook payOS sau 15 giây...'
+                );
+
+                registerPayOSWebhook();
+
+            },
+            15000
+        );
 
     }
 );
