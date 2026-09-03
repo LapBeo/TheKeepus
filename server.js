@@ -416,25 +416,25 @@ function saveOrderFiles(
 
     const finalWithStickersItem = {
 
-        token:
-            design.previewImageToken
-            ||
-            '',
+    token:
+        design.previewImageToken
+        ||
+        '',
 
-        name:
-            'final-with-stickers.jpg',
+    name:
+        'final-with-stickers.png',
 
-        type:
-            'image/jpeg',
+    type:
+        'image/png',
 
-        extension:
-            'jpg'
+    extension:
+        'png'
 
-    };
+};
 
 
-    const finalWithStickersFilename =
-        'final-with-stickers.jpg';
+const finalWithStickersFilename =
+    'final-with-stickers.png';
 
 
     const finalWithStickersPath =
@@ -467,25 +467,25 @@ function saveOrderFiles(
 
     const finalInfoItem = {
 
-        token:
-            design.previewInfoToken
-            ||
-            '',
+    token:
+        design.previewInfoToken
+        ||
+        '',
 
-        name:
-            'final-info-only.jpg',
+    name:
+        'final-info-only.png',
 
-        type:
-            'image/jpeg',
+    type:
+        'image/png',
 
-        extension:
-            'jpg'
+    extension:
+        'png'
 
-    };
+};
 
 
     const finalInfoFilename =
-        'final-info-only.jpg';
+    'final-info-only.png';
 
 
     const finalInfoPath =

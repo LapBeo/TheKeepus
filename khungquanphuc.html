@@ -196,7 +196,21 @@ header{
     display:block;
     pointer-events:none;
 }
+.charm-box img{
+    width:100% !important;
+    height:100% !important;
 
+    min-width:0 !important;
+    min-height:0 !important;
+
+    max-width:100% !important;
+    max-height:100% !important;
+
+    object-fit:contain !important;
+    object-position:center !important;
+
+    display:block !important;
+}
 /* vị trí mặc định của 3 charm */
 .charm-left{
     left:20%;
@@ -1630,22 +1644,30 @@ async function submitOrder(){
         */
 
         const canvasWithStickers =
-            await html2canvas(
-                demoFrame,
-                {
-                    backgroundColor:null,
-                    scale:2,
-                    useCORS:true,
-                    logging:false
-                }
-            );
+    await html2canvas(
+        demoFrame,
+        {
+            backgroundColor:null,
+
+            /*
+            Render nét cao.
+            scale 4 = gấp 4 kích thước hiển thị.
+            */
+            scale:4,
+
+            useCORS:true,
+            allowTaint:false,
+            logging:false,
+
+            imageTimeout:15000
+        }
+    );
 
 
-        const finalWithStickersData =
-            canvasWithStickers.toDataURL(
-                'image/jpeg',
-                0.88
-            );
+const finalWithStickersData =
+    canvasWithStickers.toDataURL(
+        'image/png'
+    );
 
 
         /*
@@ -1654,24 +1676,24 @@ async function submitOrder(){
         */
 
         const finalWithStickers =
-            await uploadTempFile({
+    await uploadTempFile({
 
-                dataUrl:
-                    finalWithStickersData,
+        dataUrl:
+            finalWithStickersData,
 
-                name:
-                    'final-with-stickers.jpg',
+        name:
+            'final-with-stickers.png',
 
-                type:
-                    'image/jpeg',
+        type:
+            'image/png',
 
-                kind:
-                    'final-with-stickers',
+        kind:
+            'final-with-stickers',
 
-                side:
-                    ''
+        side:
+            ''
 
-            });
+    });
 
 
         /*
@@ -1720,48 +1742,47 @@ async function submitOrder(){
         try{
 
             const canvasInfoOnly =
-                await html2canvas(
-                    demoFrame,
-                    {
-                        backgroundColor:null,
-                        scale:2,
-                        useCORS:true,
-                        logging:false
-                    }
-                );
+    await html2canvas(
+        demoFrame,
+        {
+            backgroundColor:null,
+            scale:4,
+            useCORS:true,
+            allowTaint:false,
+            logging:false,
+            imageTimeout:15000
+        }
+    );
 
 
-            const finalInfoOnlyData =
-                canvasInfoOnly.toDataURL(
-                    'image/jpeg',
-                    0.88
-                );
-
-
+const finalInfoOnlyData =
+    canvasInfoOnly.toDataURL(
+        'image/png'
+    );
             /*
             Upload final chỉ thông tin
             lên Render
             */
 
             finalInfoOnly =
-                await uploadTempFile({
+    await uploadTempFile({
 
-                    dataUrl:
-                        finalInfoOnlyData,
+        dataUrl:
+            finalInfoOnlyData,
 
-                    name:
-                        'final-info-only.jpg',
+        name:
+            'final-info-only.png',
 
-                    type:
-                        'image/jpeg',
+        type:
+            'image/png',
 
-                    kind:
-                        'final-info-only',
+        kind:
+            'final-info-only',
 
-                    side:
-                        ''
+        side:
+            ''
 
-                });
+    });
 
 
         }finally{
