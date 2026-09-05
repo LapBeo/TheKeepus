@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Khung Couple - The.Keepus</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+
+<style>
+
+    .product-price{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-top:8px;
+}
+
+.sale-badge{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:6px 12px;
+  border-radius:999px;
+
+  background:
+    radial-gradient(circle at 30% 30%, #a9c7ff 0%, transparent 32%),
+    radial-gradient(circle at 75% 65%, #4f7fdb 0%, transparent 45%),
+    linear-gradient(135deg,#7fa7ff,#315fbf);
+
+  background-size:180% 180%;
+
+  color:#fff;
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:.8px;
+
+  box-shadow:
+    0 0 12px rgba(79,127,219,.45),
+    0 0 24px rgba(79,127,219,.20);
+
+  animation:
+    salePulse 1.4s ease-in-out infinite,
+    saleGlow 3s ease-in-out infinite;
+}
+
+.old-price{
+  color:#9299a6;
+  font-size:15px;
+  font-weight:600;
+  text-decoration:line-through;
+}
+
+.sale-price{
+  color:var(--blue-dark);
+  font-size:23px;
+  font-weight:800;
+}
+
+@keyframes salePulse{
+  0%,100%{
+    transform:scale(1);
+    filter:brightness(1);
+  }
+
+  50%{
+    transform:scale(1.12);
+    filter:brightness(1.18);
+  }
+}
+
+@keyframes saleGlow{
+  0%{
+    background-position:0% 50%;
+  }
+
+  50%{
+    background-position:100% 50%;
+  }
+
+  100%{
+    background-position:0% 50%;
+  }
+}    
+:root{
+  --blue:#4f7fdb;
+  --blue-dark:#173b7a;
+  --ink:#0e1525;
+  --muted:#687284;
+  --border:#e5eaf3;
+  --soft:#f7f9fc;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:"Archivo",Arial,sans-serif;color:var(--ink);background:#fff}
+a{text-decoration:none;color:inherit}
+img{display:block;max-width:100%}
+.wrap{width:min(1180px,calc(100% - 40px));margin:auto}
+
+header{position:sticky;top:0;z-index:30;background:rgba(255,255,255,.97);backdrop-filter:blur(12px);border-bottom:1px solid #e8eef8}
+.nav{height:76px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.logo{font-size:28px;font-weight:800;color:var(--blue);letter-spacing:-1px}
+.back{font-size:14px;font-weight:700;color:var(--blue-dark)}
+
+.hero{padding:56px 0 24px;text-align:center}
+.hero h1{font-size:clamp(42px,5vw,62px);margin:0;color:var(--blue-dark);letter-spacing:-2px}
+.hero p{max-width:720px;margin:14px auto 0;color:var(--muted);line-height:1.7}
+
+.notice{margin:0 auto 40px;max-width:760px;padding:16px 18px;border-radius:16px;background:#edf4ff;color:#36558b;text-align:center;line-height:1.6;font-size:14px}
+
+.catalog{padding:30px 0 70px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.card{background:#fff;border:1px solid var(--border);border-radius:22px;overflow:hidden;transition:.2s;box-shadow:0 8px 26px rgba(20,40,80,.04);cursor:pointer}
+.card:hover{transform:translateY(-5px);box-shadow:0 18px 40px rgba(20,40,80,.09)}
+.card img{width:100%;aspect-ratio:1/1;object-fit:cover;background:var(--soft)}
+.card-body{padding:18px}
+.card h3{margin:0 0 8px;color:var(--blue-dark);font-size:19px}
+.price{font-size:18px;font-weight:800}
+
+.hint{
+  margin-top:12px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  min-height:44px;
+  padding:12px 14px;
+  border-radius:999px;
+  background:var(--blue);
+  color:#fff;
+
+  font-family:"Manrope", sans-serif;
+  font-size:14px;
+  font-weight:700;
+
+  cursor:pointer;
+}
+
+@media(max-width:900px){.grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){
+  .wrap{width:min(100% - 24px,1180px)}
+  .grid{grid-template-columns:1fr}
+  .hero{padding-top:36px}
+}
+</style>
+</head>
+
+<body>
+<header>
+  <div class="wrap nav">
+    <a class="logo" href="index.html">The.Keepus</a>
+    <a class="back" href="index.html#danh-muc">← Quay lại trang chính</a>
+  </div>
+</header>
+
+<main>
+<section class="hero">
+  <div class="wrap">
+    <h1>KHUNG COUPLE</h1>
+    <p>
+      Chọn mẫu Couple bạn thích. Các nội dung như tên hai bạn, ngày kỷ niệm,
+      lời nhắn, màu sắc, sticker và bố cục riêng sẽ được The.Keepus tư vấn trực tiếp qua Instagram.
+    </p>
+  </div>
+</section>
+
+<div class="wrap">
+  <div class="notice">
+    Sau khi chọn mẫu, bấm nút <strong>“Nhắn Instagram để thiết kế”</strong>.
+    Nhân viên The.Keepus sẽ hỗ trợ chốt toàn bộ nội dung và bản thiết kế với bạn.
+  </div>
+</div>
+
+<section class="catalog">
+  <div class="wrap">
+    <div class="grid">
+
+      <article class="card" ><img src="couple1.jpg" alt="couple 1">
+    <div class="card-body">
+        <h3>Mẫu 1</h3>
+        <div class="product-price">
+  <span class="sale-badge">SALE</span>
+  <span class="old-price">380.000₫</span>
+  <span class="sale-price">320.000₫</span>
+  </div>
+
+<div class="hint">Nhắn Instagram để thiết kế →</div>
+    </div>
+</article>
+<article class="card" ><img src="couple2.jpg" alt="couple 2">
+    <div class="card-body">
+        <h3>Mẫu 2</h3>
+        <div class="product-price">
+  <span class="sale-badge">SALE</span>
+  <span class="old-price">380.000₫</span>
+  <span class="sale-price">320.000₫</span>
+  </div>
+
+<div class="hint">Nhắn Instagram để thiết kế →</div>
+    </div>
+</article>
+<article class="card" ><img src="couple3.jpg" alt="couple 3">
+    <div class="card-body">
+        <h3>Mẫu 3</h3>
+        <div class="product-price">
+  <span class="sale-badge">SALE</span>
+  <span class="old-price">380.000₫</span>
+  <span class="sale-price">320.000₫</span>
+  </div>
+
+<div class="hint">Nhắn Instagram để thiết kế →</div>
+    </div>
+</article>
+
+<article class="card" ><img src="couple4.jpg" alt="couple 4">
+    <div class="card-body">
+        <h3>Mẫu 4</h3>
+        <div class="product-price">
+  <span class="sale-badge">SALE</span>
+  <span class="old-price">380.000₫</span>
+  <span class="sale-price">320.000₫</span>
+  </div>
+
+<div class="hint">Nhắn Instagram để thiết kế →</div>
+    </div>
+</article>
+<article class="card" ><img src="couple5.jpg" alt="couple 5">
+    <div class="card-body">
+        <h3>Mẫu 5</h3>
+        <div class="product-price">
+  <span class="sale-badge">SALE</span>
+  <span class="old-price">380.000₫</span>
+  <span class="sale-price">320.000₫</span>
+  </div>
+
+<div class="hint">Nhắn Instagram để thiết kế →</div>
+    </div>
+</article>
+
+<article class="card" ><img src="couple6.jpg" alt="couple 6">
+    <div class="card-body">
+        <h3>Mẫu 6</h3>
+        <div class="product-price">
+  <span class="sale-badge">SALE</span>
+  <span class="old-price">380.000₫</span>
+  <span class="sale-price">320.000₫</span>
+  </div>
+
+<div class="hint">Nhắn Instagram để thiết kế →</div>
+    </div>
+</article>
+<article class="card" ><img src="couple7.jpg" alt="couple 7">
+    <div class="card-body">
+        <h3>Mẫu 7</h3>
+        <div class="product-price">
+  <span class="sale-badge">SALE</span>
+  <span class="old-price">380.000₫</span>
+  <span class="sale-price">320.000₫</span>
+  </div>
+
+<div class="hint">Nhắn Instagram để thiết kế →</div>
+    </div>
+</article>
+
+
+
+
+
+
+    </div>
+  </div>
+</section>
+</main>
+
+<script>
+const INSTAGRAM_URL = 'https://www.instagram.com/the.keepus/';
+
+document.querySelectorAll('.card').forEach(card => {
+  const button = card.querySelector('.hint');
+
+  button.addEventListener('click', event => {
+    event.stopPropagation();
+    window.open(INSTAGRAM_URL,'_blank','noopener,noreferrer');
+  });
+
+  card.addEventListener('click', () => {
+    window.open(INSTAGRAM_URL,'_blank','noopener,noreferrer');
+  });
+});
+</script>
+
+</body>
+</html>

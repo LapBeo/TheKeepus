@@ -33,8 +33,98 @@ header{position:sticky;top:0;z-index:30;background:rgba(255,255,255,.97);backdro
 .card img{width:100%;aspect-ratio:1/1;object-fit:cover;background:var(--soft)}
 .card-body{padding:18px}
 .card h3{margin:0 0 8px;color:var(--blue-dark);font-size:19px}
-.price{font-size:18px;font-weight:800}
-.hint{margin-top:12px;display:flex;align-items:center;justify-content:center;min-height:44px;padding:12px 14px;border-radius:999px;background:var(--blue);color:#fff;font-size:14px;font-weight:800;cursor:pointer}
+
+.product-price{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-top:8px;
+}
+
+.sale-badge{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:6px 12px;
+  border-radius:999px;
+
+  background:
+    radial-gradient(circle at 30% 30%, #a9c7ff 0%, transparent 32%),
+    radial-gradient(circle at 75% 65%, #4f7fdb 0%, transparent 45%),
+    linear-gradient(135deg,#7fa7ff,#315fbf);
+
+  background-size:180% 180%;
+
+  color:#fff;
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:.8px;
+
+  box-shadow:
+    0 0 12px rgba(79,127,219,.45),
+    0 0 24px rgba(79,127,219,.20);
+
+  animation:
+    salePulse 1.4s ease-in-out infinite,
+    saleGlow 3s ease-in-out infinite;
+}
+
+.old-price{
+  color:#9299a6;
+  font-size:15px;
+  font-weight:600;
+  text-decoration:line-through;
+}
+
+.sale-price{
+  color:var(--blue-dark);
+  font-size:23px;
+  font-weight:800;
+}
+
+@keyframes salePulse{
+  0%,100%{
+    transform:scale(1);
+    filter:brightness(1);
+  }
+
+  50%{
+    transform:scale(1.12);
+    filter:brightness(1.18);
+  }
+}
+
+@keyframes saleGlow{
+  0%{
+    background-position:0% 50%;
+  }
+
+  50%{
+    background-position:100% 50%;
+  }
+
+  100%{
+    background-position:0% 50%;
+  }
+}
+.hint{
+  margin-top:12px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  min-height:44px;
+  padding:12px 14px;
+  border-radius:999px;
+  background:var(--blue);
+  color:#fff;
+
+  font-family:"Manrope", sans-serif;
+  font-size:14px;
+  font-weight:700;
+
+  cursor:pointer;
+}
 .notice{margin:0 auto 40px;max-width:760px;padding:16px 18px;border-radius:16px;background:#edf4ff;color:#36558b;text-align:center;line-height:1.6;font-size:14px}
 @media(max-width:900px){.grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:560px){.wrap{width:min(100% - 24px,1180px)}.grid{grid-template-columns:1fr}.hero{padding-top:36px}}
@@ -67,57 +157,263 @@ header{position:sticky;top:0;z-index:30;background:rgba(255,255,255,.97);backdro
   <div class="wrap">
     <div class="grid">
 
-      <article class="card" data-name="Khung CAND" data-thumb="democand.jpg" data-demo="democand.png" data-price="399000">
-    <img src="hero2.jpg" alt="Khung CAND">
+      <article class="card" data-name="Công an cộc tay" data-thumb="democand.jpg" data-demo="democand.png" data-price="399000">
+    <img src="congancoctay.jpg" alt="Công an cộc tay">
     <div class="card-body">
-        <h3>Khung CAND</h3>
-        <div class="price">399.000₫</div>
-        <div class="hint">Nhắn Instagram để thiết kế →</div>
+        <h3>Mẫu công an cộc tay</h3>
+
+<div class="product-price">
+  <span class="sale-badge">SALE</span>
+  <span class="old-price">325.000₫</span>
+  <span class="sale-price">295.000₫</span>
+</div>
+
+<div class="hint">Nhắn Instagram để thiết kế →</div>
     </div>
 </article>
 
-<article class="card" data-name="Khung CSGT" data-thumb="qp2-thumb.jpg" data-demo="qp2-demo.jpg" data-price="399000">
-    <img src="hero5.jpg" alt="Khung CSGT">
+<article class="card" data-name="Công an dài tay" data-thumb="congandaitay.jpg" data-demo="congandaitay.jpg" data-price="295000">
+    <img src="congandaitay.jpg" alt="Công an dài tay">
     <div class="card-body">
-        <h3>Khung CSGT</h3>
-        <div class="price">399.000₫</div>
-        <div class="hint">Nhắn Instagram để thiết kế →</div>
+        <h3>Mẫu công an dài tay</h3>
+        <div class="product-price">
+  <span class="sale-badge">SALE</span>
+  <span class="old-price">325.000₫</span>
+  <span class="sale-price">295.000₫</span>
+</div>
+
+<div class="hint">Nhắn Instagram để thiết kế →</div>
     </div>
 </article>
 
-<article class="card" data-name="Khung CSCD" data-thumb="qp3-thumb.jpg" data-demo="qp3-demo.jpg" data-price="399000">
-    <img src="hero5.jpg" alt="Khung CSCD">
+<article class="card" data-name="Cảnh sát giao thông" data-thumb="csgt.jpg" data-demo="csgt.jpg" data-price="295000">
+    <img src="csgt.jpg" alt="Khung CSCD">
     <div class="card-body">
-        <h3>Khung CSCD</h3>
-        <div class="price">399.000₫</div>
-        <div class="hint">Nhắn Instagram để thiết kế →</div>
+        <h3>Mẫu cảnh sát giao thông</h3>
+        <div class="product-price">
+  <span class="sale-badge">SALE</span>
+  <span class="old-price">325.000₫</span>
+  <span class="sale-price">295.000₫</span>
+  </div>
+
+<div class="hint">Nhắn Instagram để thiết kế →</div>
     </div>
 </article>
 
-<article class="card" data-name="Khung Biên phòng" data-thumb="qp4-thumb.jpg" data-demo="qp4-demo.jpg" data-price="429000">
-    <img src="qp4-thumb.jpg" alt="Khung Biên phòng">
+<article class="card" data-name="Biên phòng" data-thumb="bienphong.jpg" data-demo="bienphong.jpg" data-price="295000">
+    <img src="bienphong.jpg" alt="Khung Biên phòng">
     <div class="card-body">
-        <h3>Khung Biên phòng</h3>
-        <div class="price">429.000₫</div>
-        <div class="hint">Nhắn Instagram để thiết kế →</div>
+        <h3>Mẫu Biên phòng</h3>
+        <div class="product-price">
+  <span class="sale-badge">SALE</span>
+  <span class="old-price">325.000₫</span>
+  <span class="sale-price">295.000₫</span>
+  </div>
+
+<div class="hint">Nhắn Instagram để thiết kế →</div>
     </div>
 </article>
 
-<article class="card" data-name="Khung Hải quân" data-thumb="qp5-thumb.jpg" data-demo="qp5-demo.jpg" data-price="429000">
-    <img src="qp5-thumb.jpg" alt="Khung Hải quân">
+<article class="card" data-name="Hải quân cộc tay " data-thumb="haiquancoctay.jpg" data-demo="haiquancoctay.jpg" data-price="295000">
+    <img src="haiquancoctay.jpg" alt="Khung Hải quân">
     <div class="card-body">
-        <h3>Khung Hải quân</h3>
-        <div class="price">429.000₫</div>
-        <div class="hint">Nhắn Instagram để thiết kế →</div>
+        <h3>Mẫu Hải quân cộc tay</h3>
+        <div class="product-price">
+  <span class="sale-badge">SALE</span>
+  <span class="old-price">325.000₫</span>
+  <span class="sale-price">295.000₫</span>
+  </div>
+
+<div class="hint">Nhắn Instagram để thiết kế →</div>
     </div>
 </article>
 
-<article class="card" data-name="Khung PK-KQ" data-thumb="qp6-thumb.jpg" data-demo="qp6-demo.jpg" data-price="429000">
-    <img src="qp6-thumb.jpg" alt="Khung PK-KQ">
+<article class="card" data-name="Hải quân dài tay" data-thumb="haiquandaitay.jpg" data-demo="haiquandaitay.jpg" data-price="295000">
+    <img src="haiquandaitay.jpg" alt="Khung PK-KQ">
     <div class="card-body">
-        <h3>Khung PK-KQ</h3>
-        <div class="price">429.000₫</div>
-        <div class="hint">Nhắn Instagram để thiết kế →</div>
+        <h3>Mẫu Hải quân dài tay</h3>
+        <div class="product-price">
+  <span class="sale-badge">SALE</span>
+  <span class="old-price">325.000₫</span>
+  <span class="sale-price">295.000₫</span>
+  </div>
+
+<div class="hint">Nhắn Instagram để thiết kế →</div>
+    </div>
+</article>
+<article class="card" data-name="Phòng quân không quân" data-thumb="pkkq.jpg" data-demo="pkkq.jpg" data-price="295000">
+    <img src="pkkq.jpg" alt="Khung PK-KQ">
+    <div class="card-body">
+        <h3>Mẫu Phòng không không quân</h3>
+        <div class="product-price">
+  <span class="sale-badge">SALE</span>
+  <span class="old-price">325.000₫</span>
+  <span class="sale-price">295.000₫</span>
+  </div>
+
+<div class="hint">Nhắn Instagram để thiết kế →</div>
+    </div>
+</article>
+
+<article class="card" data-name="Lục Quân" data-thumb="lucquan.jpg" data-demo="lucquan.jpg" data-price="295000">
+    <img src="lucquan.jpg" alt="Khung luc quân">
+    <div class="card-body">
+        <h3>Mẫu Lục Quân</h3>
+        <div class="product-price">
+  <span class="sale-badge">SALE</span>
+  <span class="old-price">325.000₫</span>
+  <span class="sale-price">295.000₫</span>
+  </div>
+
+<div class="hint">Nhắn Instagram để thiết kế →</div>
+    </div>
+</article>
+<article class="card" data-name="Cảnh sát biển" data-thumb="lucquan.jpg" data-demo="lucquan.jpg" data-price="295000">
+    <img src="canhsatbien.jpg" alt="Khung luc quân">
+    <div class="card-body">
+        <h3>Mẫu Cảnh sát biển</h3>
+        <div class="product-price">
+  <span class="sale-badge">SALE</span>
+  <span class="old-price">325.000₫</span>
+  <span class="sale-price">295.000₫</span>
+  </div>
+
+<div class="hint">Nhắn Instagram để thiết kế →</div>
+    </div>
+</article>
+<article class="card" data-name="An ninh cộc tay" data-thumb="lucquan.jpg" data-demo="lucquan.jpg" data-price="295000">
+    <img src="anninhcoctay.jpg" alt="Khung luc quân">
+    <div class="card-body">
+        <h3>Mẫu An ninh cộc tay</h3>
+        <div class="product-price">
+  <span class="sale-badge">SALE</span>
+  <span class="old-price">325.000₫</span>
+  <span class="sale-price">295.000₫</span>
+  </div>
+
+<div class="hint">Nhắn Instagram để thiết kế →</div>
+    </div>
+</article>
+<article class="card" data-name="An ninh dài tay" data-thumb="lucquan.jpg" data-demo="lucquan.jpg" data-price="295000">
+    <img src="anninhdaitay.jpg" alt="Khung luc quân">
+    <div class="card-body">
+        <h3>Mẫu An ninh dài tay</h3>
+        <div class="product-price">
+  <span class="sale-badge">SALE</span>
+  <span class="old-price">325.000₫</span>
+  <span class="sale-price">295.000₫</span>
+  </div>
+
+<div class="hint">Nhắn Instagram để thiết kế →</div>
+    </div>
+</article>
+
+<article class="card" data-name="Mẫu 1" data-thumb="lucquan.jpg" data-demo="lucquan.jpg" data-price="295000">
+    <img src="mau1quanphuc.jpg" alt="Khung luc quân">
+    <div class="card-body">
+        <h3>Mẫu 1</h3>
+        <div class="product-price">
+  <span class="sale-badge">SALE</span>
+  <span class="old-price">325.000₫</span>
+  <span class="sale-price">295.000₫</span>
+  </div>
+
+<div class="hint">Nhắn Instagram để thiết kế →</div>
+    </div>
+</article>
+
+<article class="card" data-name="Mẫu 2" data-thumb="lucquan.jpg" data-demo="lucquan.jpg" data-price="295000">
+    <img src="mau2quanphuc.jpg" alt="Khung luc quân">
+    <div class="card-body">
+        <h3>Mẫu 2</h3>
+        <div class="product-price">
+  <span class="sale-badge">SALE</span>
+  <span class="old-price">325.000₫</span>
+  <span class="sale-price">295.000₫</span>
+  </div>
+
+<div class="hint">Nhắn Instagram để thiết kế →</div>
+    </div>
+</article>
+
+<article class="card" data-name="Mẫu 3" data-thumb="lucquan.jpg" data-demo="lucquan.jpg" data-price="295000">
+    <img src="mau3quanphuc.jpg" alt="Khung luc quân">
+    <div class="card-body">
+        <h3>Mẫu 3</h3>
+        <div class="product-price">
+  <span class="sale-badge">SALE</span>
+  <span class="old-price">325.000₫</span>
+  <span class="sale-price">295.000₫</span>
+  </div>
+
+<div class="hint">Nhắn Instagram để thiết kế →</div>
+    </div>
+</article>
+
+<article class="card" data-name="Mẫu 4" data-thumb="lucquan.jpg" data-demo="lucquan.jpg" data-price="295000">
+    <img src="mau4quanphuc.jpg" alt="Khung luc quân">
+    <div class="card-body">
+        <h3>Mẫu 4</h3>
+        <div class="product-price">
+  <span class="sale-badge">SALE</span>
+  <span class="old-price">325.000₫</span>
+  <span class="sale-price">295.000₫</span>
+  </div>
+
+<div class="hint">Nhắn Instagram để thiết kế →</div>
+    </div>
+</article>
+
+<article class="card" data-name="Mẫu 5" data-thumb="lucquan.jpg" data-demo="lucquan.jpg" data-price="295000">
+    <img src="mau5quanphuc.jpg" alt="Khung luc quân">
+    <div class="card-body">
+        <h3>Mẫu 5</h3>
+        <div class="product-price">
+  <span class="sale-badge">SALE</span>
+  <span class="old-price">325.000₫</span>
+  <span class="sale-price">295.000₫</span>
+  </div>
+
+<div class="hint">Nhắn Instagram để thiết kế →</div>
+    </div>
+</article>
+<article class="card" data-name="Mẫu 6" data-thumb="lucquan.jpg" data-demo="lucquan.jpg" data-price="295000">
+    <img src="mau6quanphuc.jpg" alt="Khung luc quân">
+    <div class="card-body">
+        <h3>Mẫu 6</h3>
+        <div class="product-price">
+  <span class="sale-badge">SALE</span>
+  <span class="old-price">325.000₫</span>
+  <span class="sale-price">295.000₫</span>
+  </div>
+
+<div class="hint">Nhắn Instagram để thiết kế →</div>
+    </div>
+</article>
+<article class="card" data-name="Mẫu 7" data-thumb="lucquan.jpg" data-demo="lucquan.jpg" data-price="295000">
+    <img src="mau7quanphuc.jpg" alt="Khung luc quân">
+    <div class="card-body">
+        <h3>Mẫu 7</h3>
+        <div class="product-price">
+  <span class="sale-badge">SALE</span>
+  <span class="old-price">325.000₫</span>
+  <span class="sale-price">295.000₫</span>
+  </div>
+
+<div class="hint">Nhắn Instagram để thiết kế →</div>
+    </div>
+</article>
+<article class="card" data-name="Mẫu 8" data-thumb="lucquan.jpg" data-demo="lucquan.jpg" data-price="295000">
+    <img src="mau8quanphuc.jpg" alt="Khung luc quân">
+    <div class="card-body">
+        <h3>Mẫu 8</h3>
+        <div class="product-price">
+  <span class="sale-badge">SALE</span>
+  <span class="old-price">325.000₫</span>
+  <span class="sale-price">295.000₫</span>
+  </div>
+
+<div class="hint">Nhắn Instagram để thiết kế →</div>
     </div>
 </article>
 
